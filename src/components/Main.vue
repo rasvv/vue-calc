@@ -5,7 +5,7 @@
   >
     <v-row class="bordered">
       <v-col cols="4" class="calc__selectnuclids borred">
-        Выбор
+        Выбор {{ radioGroup }}
         <v-row class="calc__typs bordered">
           Тип РАО
           <v-radio-group
@@ -37,7 +37,7 @@
                 Период полураспада
               </v-col>
               <v-col>
-                <!-- `{{ item.rper}}` -->
+                {{ selected.Period_p_r }} {{ selected.Edinica_izmer_p_r }} 
               </v-col>
             </v-row>
             <v-row>
@@ -45,7 +45,7 @@
                 Вид илучения
               </v-col>
               <v-col>
-                <!-- `{{ item.rper}}` -->
+                {{ selected.Vid_izluch }}
               </v-col>
             </v-row>
             <v-row>
@@ -53,7 +53,7 @@
                 Трасурановые (Да/Нет)
               </v-col>
               <v-col>
-                <!-- `{{ item.rper}}` -->
+                {{ selected.AM > 92? 'да': 'нет' }}
               </v-col>
             </v-row>
             <v-row>
@@ -61,7 +61,7 @@
                 ПЗУА, Бк/г
               </v-col>
               <v-col>
-                <!-- `{{ item.rper}}` -->
+                {{ selected.MZUA }}
               </v-col>
             </v-row>
 
@@ -72,20 +72,22 @@
             <v-list>
               <v-list-item-group class="calc__nuclids bordered">
                 <v-list-item
-                  v-for="(item, i) in 50"
+                  v-for="(item, i) in nuclids"
                   :key="i"
+                  @click="selected = nuclids[i]"
+                  @dblclick="addNuclid"
                 >
-                  {{ i + 1 }}
-                  <!-- {{ item.Name_RN }} -->
+                  <!-- {{ i + 1 }} -->
+                  {{ item.Name_RN }}
                 </v-list-item>
               </v-list-item-group>
             </v-list>
           </v-col>
           <v-col cols="1" class="buttons">
-            <v-btn>
-              <v-icon class="mx-0 mb-0">mdi-plus</v-icon>
+            <v-btn @click="addNuclid">
+              <v-icon class="mx-0 mb-0" >mdi-plus</v-icon>
             </v-btn>
-            <v-btn>
+            <v-btn @click="delNuclid">
               <v-icon class="mx-0 mb-0">mdi-minus</v-icon>
             </v-btn>
           </v-col>
@@ -93,11 +95,13 @@
             <v-list>
               <v-list-item-group class="calc__nuclids bordered">
                 <v-list-item
-                  v-for="(item, i) in 2"
+                  v-for="(item, i) in selectedNuclids"
                   :key="i"
+                  @click="selectedMin = selectedNuclids[i]"
+                  @dblclick="delNuclid"
                 >
                   <div class="calc__nuclids-card">
-                    <div>{{ i + 1 }}</div>
+                    {{ item.Name_RN }}
                     <v-text-field
                       label="Удельная активность"
                       :rules="rules"
@@ -120,13 +124,18 @@
 </template>
 
 <script>
-const fs = require('fs');
-// import fs from 'fs';
+
+// const fs = require('fs');
+// import * as fs from 'fs';
 // import {path} from 'path';
 export default {
   data () {
     return {
-      nuclids: localStorage.getItem('nuclids'),
+      // nuclids: localStorage.getItem('nuclids'),
+      nuclids: [],
+      selected: {},
+      selectedMin: {},
+      selectedNuclids: [],
       radioGroup: 1,
       kod: false,
       rules: [
@@ -135,8 +144,20 @@ export default {
       ],      
     }
   },
+  methods: {
+    addNuclid() {
+      this.selectedNuclids.push(this.selected)
+    },
+    delNuclid() {
+      this.selectedNuclids.splice(this.selectedNuclids.indexOf(this.selectedMin), 1)
+    },
+    setSelected() {
+      // this.selected = this.nuclids[i]
+    }
+  },
   mounted() {
-    localStorage.setItem('nuclids', fs.readFileSync('@/db/nuclids.json', 'utf-8'));    
+    const databases = require('@/db/nuclids.json');
+    this.nuclids = databases;
   },
 }
 </script>
