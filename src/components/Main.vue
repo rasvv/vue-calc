@@ -3,13 +3,13 @@
     class="calc"
     fluid
   >
-    <v-row class="bordered">
+    <v-row class="calc__form bordered">
       <v-col cols="4" class="calc__selectnuclids borred">
-        Выбор {{ radioGroup }}
-        <v-row class="calc__typs bordered">
-          Тип РАО
+        Выбор
+        <v-row class="calc__types bordered">
+          Агрегатное состояние
           <v-radio-group
-            v-model="radioGroup"
+            v-model="p01"
             row
             class="calc__items"
           >
@@ -28,7 +28,7 @@
               :value=3
               class="calc__item"
             ></v-radio>
-          </v-radio-group>			
+          </v-radio-group>
         </v-row>
         <v-row class="bordered">
           <v-col>
@@ -53,6 +53,7 @@
                 Трасурановые (Да/Нет)
               </v-col>
               <v-col>
+                <!-- {{ selected.Trans }} -->
                 {{ selected.AM > 92? 'да': 'нет' }}
               </v-col>
             </v-row>
@@ -67,22 +68,32 @@
 
           </v-col>
         </v-row> 
+
         <v-row width="100%">
           <v-col cols="5">
-            <v-list>
-              <v-list-item-group class="calc__nuclids bordered">
-                <v-list-item
-                  v-for="(item, i) in nuclids"
-                  :key="i"
-                  @click="selected = nuclids[i]"
-                  @dblclick="addNuclid"
-                >
-                  <!-- {{ i + 1 }} -->
-                  {{ item.Name_RN }}
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
+            <div height="100%">
+              <v-text-field
+                label="Фильтр"
+                hide-details="auto"
+                clearable
+                v-model="filter"
+              ></v-text-field>
+              <v-list>
+                <v-list-item-group class="calc__nuclids left bordered">
+                  <v-list-item
+                    v-for="(item, i) in filteredNuclids"
+                    :key="i"
+                    @click="selected = filteredNuclids[i]"
+                    @dblclick="addNuclid"
+                  >
+                    <!-- {{ i + 1 }} -->
+                    {{ item.Name_RN }}
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </div>
           </v-col>
+
           <v-col cols="1" class="buttons">
             <v-btn @click="addNuclid">
               <v-icon class="mx-0 mb-0" >mdi-plus</v-icon>
@@ -91,9 +102,10 @@
               <v-icon class="mx-0 mb-0">mdi-minus</v-icon>
             </v-btn>
           </v-col>
+
           <v-col cols="6">
             <v-list>
-              <v-list-item-group class="calc__nuclids bordered">
+              <v-list-item-group class="calc__nuclids right bordered">
                 <v-list-item
                   v-for="(item, i) in selectedNuclids"
                   :key="i"
@@ -117,14 +129,15 @@
         </v-row>
       </v-col>
       <v-col cols="8" class="calc__kod" v-if="kod">
-        Код РАО
+        <!-- Код РАО -->
+        <Kod :list = "selectedNuclids" :kodRAO = "kodRAO" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-
+import Kod from './Kod.vue'
 // const fs = require('fs');
 // import * as fs from 'fs';
 // import {path} from 'path';
@@ -132,20 +145,39 @@ export default {
   data () {
     return {
       // nuclids: localStorage.getItem('nuclids'),
+      // kodRAO: '***********',
+      filter: '',
       nuclids: [],
+      // filteredNuclids: [],
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
-      radioGroup: 1,
-      kod: false,
+			
+      p01: 1,
+      p02: '*',
+      p03: '*',
+      p04: '*',
+      p05: '*',
+      p06: '*',
+      p07: '*',
+      p08: '*',
+      p09: '**',
+      p011: '*',
+      kod: true,
       rules: [
         value => !!value || 'Required.',
         // value => (value && value.length >= 3) || 'Min 3 characters',
       ],      
     }
   },
+  components: {
+    Kod
+  },
   methods: {
     addNuclid() {
+      this.selected.Trans = this.selected.AM > 92? 'да': 'нет' 
+      this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`
+      this.selected.Udamza = this.selected.UdA_TRO / this.selected.MZA
       this.selectedNuclids.push(this.selected)
     },
     delNuclid() {
@@ -153,27 +185,40 @@ export default {
     },
     setSelected() {
       // this.selected = this.nuclids[i]
-    }
+    },
   },
   mounted() {
     const databases = require('@/db/nuclids.json');
     this.nuclids = databases;
   },
+  computed: {
+    filteredNuclids () {
+      return this.nuclids.filter((elem) => {
+        if (this.filter === '' || !this.filter) return true
+        else return elem.Name_RN.indexOf(this.filter) > -1
+      })
+    },
+    kodRAO () {
+      const {p01, p02, p03, p04, p05, p06, p07, p08, p09, p011} = this
+      return p01 + p02 + p03 + p04 + p05 + p06 + p07 + p08 + p09 + p011
+    }
+  }
 }
 </script>
 
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
-*
+html
   box-sizing: border-box
   margin: 0 
   padding: 0 
 
 .calc
-  // margin: 15px
-  // padding: 15px
+  &__form
+    height: 100vh 
+
   &__types
-    padding: 10px
+    padding: 5px
 
   &__item
     display: inline-block
@@ -181,13 +226,13 @@ export default {
   &__items
     width: 100%
     display: flex
-    justify-content: space-between
+    justify-content: space-around
     display: block
     gap: 30px
 
   &__nuclids
     width: 100%
-    height: calc(98vh - 410px)
+    // height: calc(98vh - 410px)
     overflow: scroll
 
     &-card
@@ -197,7 +242,7 @@ export default {
       justify-content: start
 
   &__selectnuclids
-    // padding: 15px
+    // max-height: 95vh
 
 .v-btn:not(.v-btn--round).v-size--default
     width: 100%
@@ -223,4 +268,10 @@ export default {
   justify-content: center
   align-items: center
 
+.left
+  // height: 100%
+  overflow: scroll
+  height: calc(98vh - 440px)
+.right
+  height: calc(98vh - 390px)
 </style>

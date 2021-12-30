@@ -21,3 +21,8 @@ export default {
   }),
 };
 </script>
+
+<style lang="sass" scoped>
+	* 
+		max-height: 100vh
+</style>
