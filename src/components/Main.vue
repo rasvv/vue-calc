@@ -9,7 +9,7 @@
         <v-row class="calc__types bordered">
           Агрегатное состояние
           <v-radio-group
-            v-model="p01"
+            v-model="codRAO[0].value"
             row
             class="calc__items"
           >
@@ -50,7 +50,7 @@
             </v-row>
             <v-row>
               <v-col>
-                Трасурановые (Да/Нет)
+                Трансурановые (Да/Нет)
               </v-col>
               <v-col>
                 <!-- {{ selected.Trans }} -->
@@ -130,7 +130,12 @@
       </v-col>
       <v-col cols="8" class="calc__kod" v-if="kod">
         <!-- Код РАО -->
-        <Kod :list = "selectedNuclids" :kodRAO = "kodRAO" />
+        <Kod
+          :list = "selectedNuclids"
+          :kodRAO = "kodRAO"
+          :codRAO = "codRAO"
+          :opCods = "opCods"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -138,36 +143,62 @@
 
 <script>
 import Kod from './Kod.vue'
-// const fs = require('fs');
-// import * as fs from 'fs';
-// import {path} from 'path';
 export default {
   data () {
     return {
-      // nuclids: localStorage.getItem('nuclids'),
-      // kodRAO: '***********',
       filter: '',
       nuclids: [],
-      // filteredNuclids: [],
+      opCods: [],
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
-			
-      p01: 1,
-      p02: '*',
-      p03: '*',
-      p04: '*',
-      p05: '*',
-      p06: '*',
-      p07: '*',
-      p08: '*',
-      p09: '**',
-      p011: '*',
+      
+      codRAO: [
+        {
+          elem: "p01",
+          value: 2
+        },
+        {
+          elem: "p02",
+          value: "*"
+        },
+        {
+          elem: "p03",
+          value: "*"
+        },
+        {
+          elem: "p04",
+          value: 0
+        },
+        {
+          elem: "p05",
+          value: "*"
+        },
+        {
+          elem: "p06",
+          value: "*"
+        },
+        {
+          elem: "p07",
+          value: 0
+        },
+        {
+          elem: "p08",
+          value: 0
+        },
+        {
+          elem: "p09",
+          value: "**"
+        },
+        {
+          elem: "p11",
+          value: 2
+        },
+      ],
       kod: true,
       rules: [
-        value => !!value || 'Required.',
-        // value => (value && value.length >= 3) || 'Min 3 characters',
-      ],      
+        value => !!value || 'Required.'
+      ],
     }
   },
   components: {
@@ -188,8 +219,8 @@ export default {
     },
   },
   mounted() {
-    const databases = require('@/db/nuclids.json');
-    this.nuclids = databases;
+    this.nuclids = require('@/db/nuclids.json');
+    this.opCods = require('@/db/opCods.json');
   },
   computed: {
     filteredNuclids () {
@@ -198,9 +229,19 @@ export default {
         else return elem.Name_RN.indexOf(this.filter) > -1
       })
     },
+    filteredOpCods () {
+      return this.opCods.filter((elem) => {
+        if (this.filter === '' || !this.filter) return true
+        else return elem.Kod.indexOf(this.filter) > -1
+      })
+    },
     kodRAO () {
-      const {p01, p02, p03, p04, p05, p06, p07, p08, p09, p011} = this
-      return p01 + p02 + p03 + p04 + p05 + p06 + p07 + p08 + p09 + p011
+      let cod = ''
+      this.codRAO.forEach(elem => {
+        cod = cod.toString() + elem.value
+      })
+      console.log(cod);
+      return cod
     }
   }
 }
@@ -215,7 +256,8 @@ html
 
 .calc
   &__form
-    height: 100vh 
+    min-height: 1020px    
+    height: 98vh 
 
   &__types
     padding: 5px
@@ -256,8 +298,7 @@ html
   border: 1px solid #aaa
 
 .borred
-  border: 1px solid red
-  height: 98vh
+  height: 97vh
 
 .buttons
   padding: 0
