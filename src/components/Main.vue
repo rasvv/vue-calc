@@ -79,7 +79,7 @@
                 v-model="filter"
               ></v-text-field>
               <v-list>
-                <v-list-item-group class="calc__nuclids left bordered">
+                <v-list-item-group class="calc__nuclids bordered">
                   <v-list-item
                     v-for="(item, i) in filteredNuclids"
                     :key="i"
@@ -104,18 +104,27 @@
           </v-col>
 
           <v-col cols="6">
+            <v-btn 
+              :disabled="!isDisabledBtn"
+              @click="kod = true"
+            >
+              Расчитать
+            </v-btn>            
             <v-list>
-              <v-list-item-group class="calc__nuclids right bordered">
+              <v-list-item-group class="calc__nuclids bordered">
                 <v-list-item
                   v-for="(item, i) in selectedNuclids"
                   :key="i"
-                  @click="selectedMin = selectedNuclids[i]"
+                  @click="selectedMin = selectedNuclids[i]; isDisabledBtn()"
                   @dblclick="delNuclid"
+                  @change="isdis()"
                 >
                   <div class="calc__nuclids-card">
                     {{ item.Name_RN }}
                     <v-text-field
                       label="Удельная активность"
+                      v-model="item.UdA"
+                      @change="isdis()"
                       :rules="rules"
                       hide-details="auto"
                     ></v-text-field>
@@ -208,7 +217,8 @@ export default {
     addNuclid() {
       this.selected.Trans = this.selected.AM > 92? 'да': 'нет' 
       this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`
-      this.selected.Udamza = this.selected.UdA_TRO / this.selected.MZA
+      this.selected.UdA = 0
+      this.selected.Udamza = this.selected.UdA / this.selected.UdA_TRO
       this.selectedNuclids.push(this.selected)
     },
     delNuclid() {
@@ -216,6 +226,24 @@ export default {
     },
     setSelected() {
       // this.selected = this.nuclids[i]
+    },
+    isdis () {
+      let per = false
+      console.log(this.selectedNuclids);
+      if (this.selectedNuclids.length === 0) return false
+      this.selectedNuclids.forEach(elem => {
+        console.log(elem.UdA);
+        if (!elem.UdA || elem.UdA <= 0 ) per = true 
+      }) 
+      console.log(per);
+      if (per) {
+        this.isdisabled = false 
+      }
+      else {
+        this.isdisabled = true
+      }        
+      console.log(this.isdisabled);
+      return this.isdisabled
     },
   },
   mounted() {
@@ -242,7 +270,31 @@ export default {
       })
       console.log(cod);
       return cod
-    }
+    },
+    isDisabledBtn () {
+      // return this.nuclids.filter((elem) => {
+      //   if (this.filter === '' || !this.filter) return true
+      //   else return elem.Name_RN.indexOf(this.filter) > -1
+      // })
+      // let per = false
+      console.log(this.selectedNuclids);
+      if (this.selectedNuclids.length === 0) return false
+      return this.selectedNuclids.forEach(elem => {
+        console.log(elem.UdA);
+        if (!elem.UdA || elem.UdA <= 0 ) return true 
+      }) 
+      // console.log(per);
+      // if (per) {
+      //   return false 
+      // }
+      // else {
+      //   return true
+      // }        
+    },    
+    isdisa () {
+      console.log('isdis');
+      return this.isDisabled()
+    },    
   }
 }
 </script>
@@ -274,7 +326,7 @@ html
 
   &__nuclids
     width: 100%
-    // height: calc(98vh - 410px)
+    height: calc(98vh - 440px)
     overflow: scroll
 
     &-card
@@ -314,5 +366,5 @@ html
   overflow: scroll
   height: calc(98vh - 440px)
 .right
-  height: calc(98vh - 390px)
+  height: calc(98vh - 440px)
 </style>

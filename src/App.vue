@@ -23,6 +23,11 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-	* 
-		max-height: 100vh
+html
+  max-height: 100vh
+
+@media (min-width: 2800px)
+  .container
+    max-width: 3700px !important
+
 </style>
