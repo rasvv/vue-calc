@@ -13,12 +13,39 @@
           <h2 class="mb-6">
             {{ kodRAO }}
           </h2>
-          <v-row class="bordered">
+
+          <v-btn 
+            :disabled="!enabledBTN"
+            width="100%"
+            class="mb-4"            
+            @click="calcCodRAO"
+          >
+            Расчитать
+          </v-btn>            
+
+
+          <v-btn 
+            width="100%"
+            class="mb-4"
+            @click="showKod = true"
+          >
+            Скопировать код
+          </v-btn>          
+          <v-btn 
+            width="100%"
+            class="mb-10"
+            @click="setShowKod"
+          >
+            Новый расчет
+          </v-btn>          
+          <v-row class="calc__types bordered">
             ОЗРИ?
             <v-radio-group
               v-model="ozri"
               column
+              :disabled="codRAO[0].value != 2"
               class="calc__items"
+              @change="setOZRI"
             >
               <v-radio label="Да" :value=1 class="calc__item"></v-radio>
               <v-radio label="Нет" :value=2 class="calc__item"></v-radio>
@@ -158,9 +185,9 @@
                 <v-row>
                   <v-combobox
                     v-model="selected"
-                    :items="opCods"
-                    item-text="Text"
-                    item-value="Cod"
+                    :items="typeRAO"
+                    item-text="description"
+                    item-value="cod"
                     dense
                     clearable
                     @change="parseSelected"
@@ -202,7 +229,7 @@
 
 <script>
 export default {
-  props: ['list', 'kodRAO', 'codRAO', 'opCods'],
+  props: ['list', 'kodRAO', 'codRAO', 'typeRAO', 'showKod', 'validNuclids'],
   data() {
     return {
       ozri: 2,
@@ -222,16 +249,35 @@ export default {
   computed: {
     trans() {
       return 'AM > 92? "да": "нет"' 
-    }
+    },
+    enabledBTN() {
+      return this.validNuclids && this.codRAO[8].value != "**"
+    }    
   },
   methods: {
     parseSelected() {
       console.log(this.selected); 
-      this.desc = this.selected.Description
-      this.codRAO[8].value = this.selected.Cod
+      this.desc = this.selected.description
+      this.codRAO[8].value = this.selected.cod
       // this.selected
+    },
+    setOZRI() {
+      if (this.ozri === 1) {this.codRAO[1].value = 4}
+    },
+    setShowKod() {
+      this.$emit(this.showKod = false)
+      console.log(this.showKod);
+    },
+    calcCodRAO() {
+      this.list.forEach(elem => {
+        console.log("UdA = " + elem.UdA)
+        console.log("MOI = " + elem.MOI)
+        console.log("Udamza = " + elem.Udamza)
+        elem.Udamza = elem.UdA / +elem.MOI
+        console.log("Udamza = " + elem.Udamza)
+      });
     }
-  }
+  },
 }
 </script>
 

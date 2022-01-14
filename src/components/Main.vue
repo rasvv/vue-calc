@@ -12,6 +12,7 @@
             v-model="codRAO[0].value"
             row
             class="calc__items"
+            @change="codRAO[8].value = '**'"
           >
             <v-radio
               label="Жидкие РАО"
@@ -104,27 +105,26 @@
           </v-col>
 
           <v-col cols="6">
-            <v-btn 
-              :disabled="!isDisabledBtn"
-              @click="kod = true"
+            <!-- <v-btn 
+              :disabled="!enabledBTN"
+              @click="showKod = true"
             >
               Расчитать
-            </v-btn>            
+            </v-btn>             -->
             <v-list>
               <v-list-item-group class="calc__nuclids bordered">
                 <v-list-item
                   v-for="(item, i) in selectedNuclids"
                   :key="i"
-                  @click="selectedMin = selectedNuclids[i]; isDisabledBtn()"
+                  @click="selectedMin = selectedNuclids[i]"
                   @dblclick="delNuclid"
-                  @change="isdis()"
                 >
                   <div class="calc__nuclids-card">
                     {{ item.Name_RN }}
                     <v-text-field
                       label="Удельная активность"
                       v-model="item.UdA"
-                      @change="isdis()"
+                      @change="isdisb()"
                       :rules="rules"
                       hide-details="auto"
                     ></v-text-field>
@@ -137,13 +137,15 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="8" class="calc__kod" v-if="kod">
+      <v-col cols="8" class="calc__kod">
         <!-- Код РАО -->
         <Kod
           :list = "selectedNuclids"
           :kodRAO = "kodRAO"
           :codRAO = "codRAO"
-          :opCods = "opCods"
+          :typeRAO = "filteredTypeRAO"
+          :showKod = "showKod"
+          :validNuclids = "validNuclids"
         />
       </v-col>
     </v-row>
@@ -156,8 +158,10 @@ export default {
   data () {
     return {
       filter: '',
+      validNuclids: false,
+      showKod: false,
       nuclids: [],
-      opCods: [],
+      typeRAO: [],
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
@@ -218,37 +222,33 @@ export default {
       this.selected.Trans = this.selected.AM > 92? 'да': 'нет' 
       this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`
       this.selected.UdA = 0
-      this.selected.Udamza = this.selected.UdA / this.selected.UdA_TRO
+      this.selected.Udamza = this.selected.UdA / +this.selected.MOI
       this.selectedNuclids.push(this.selected)
+      this.isdisb()
     },
     delNuclid() {
       this.selectedNuclids.splice(this.selectedNuclids.indexOf(this.selectedMin), 1)
+      this.isdisb()
     },
     setSelected() {
       // this.selected = this.nuclids[i]
     },
-    isdis () {
+    isdisb () {
       let per = false
-      console.log(this.selectedNuclids);
       if (this.selectedNuclids.length === 0) return false
+      console.log("isdisb");
+      console.log(this.selectedNuclids);
       this.selectedNuclids.forEach(elem => {
-        console.log(elem.UdA);
-        if (!elem.UdA || elem.UdA <= 0 ) per = true 
-      }) 
-      console.log(per);
-      if (per) {
-        this.isdisabled = false 
-      }
-      else {
-        this.isdisabled = true
-      }        
-      console.log(this.isdisabled);
-      return this.isdisabled
+        console.log(elem.UdA)
+        if (!elem.UdA || elem.UdA <= 0 ) per = true
+      })
+      per ? this.isdisabled = false : this.isdisabled = true
+      this.validNuclids = this.isdisabled
     },
   },
   mounted() {
     this.nuclids = require('@/db/nuclids.json');
-    this.opCods = require('@/db/opCods.json');
+    this.typeRAO = require('@/db/typeRAO.json');
   },
   computed: {
     filteredNuclids () {
@@ -257,10 +257,10 @@ export default {
         else return elem.Name_RN.indexOf(this.filter) > -1
       })
     },
-    filteredOpCods () {
-      return this.opCods.filter((elem) => {
-        if (this.filter === '' || !this.filter) return true
-        else return elem.Kod.indexOf(this.filter) > -1
+    filteredTypeRAO () {
+      return this.typeRAO.filter((elem) => {
+        if (elem.section === this.codRAO[0].value) return true
+        else return elem.section === this.codRAO[0].value
       })
     },
     kodRAO () {
@@ -271,30 +271,6 @@ export default {
       console.log(cod);
       return cod
     },
-    isDisabledBtn () {
-      // return this.nuclids.filter((elem) => {
-      //   if (this.filter === '' || !this.filter) return true
-      //   else return elem.Name_RN.indexOf(this.filter) > -1
-      // })
-      // let per = false
-      console.log(this.selectedNuclids);
-      if (this.selectedNuclids.length === 0) return false
-      return this.selectedNuclids.forEach(elem => {
-        console.log(elem.UdA);
-        if (!elem.UdA || elem.UdA <= 0 ) return true 
-      }) 
-      // console.log(per);
-      // if (per) {
-      //   return false 
-      // }
-      // else {
-      //   return true
-      // }        
-    },    
-    isdisa () {
-      console.log('isdis');
-      return this.isDisabled()
-    },    
   }
 }
 </script>
