@@ -124,7 +124,7 @@
                     <v-text-field
                       label="Удельная активность"
                       v-model="item.UdA"
-                      @change="isdisb()"
+                      @change="isdisb(); calcCodRAO()"
                       :rules="rules"
                       hide-details="auto"
                     ></v-text-field>
@@ -323,7 +323,7 @@
                       </v-row>
                       <v-row>
                         <v-combobox
-                          v-model="codRAO[8].value"
+                          v-model="selectedTypes"
                           :items="filteredTypeRAO"
                           item-text="description"
                           item-value="cod"
@@ -475,9 +475,9 @@ export default {
       this.validNuclids = this.isdisabled
     },
     parseSelected() {
-      console.log(this.filteredTypeRAO); 
-      this.desc = this.filteredTypeRAO.description
-      this.codRAO[8].value = this.filteredTypeRAO.cod
+      console.log(this.selectedTypes); 
+      this.desc = this.selectedTypes.description
+      this.codRAO[8].value = this.selectedTypes.cod
       // this.selected
     },
     setOZRI() {
