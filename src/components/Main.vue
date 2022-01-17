@@ -5,9 +5,8 @@
   >
     <v-row class="calc__form bordered">
       <v-col cols="4" class="calc__selectnuclids borred">
-        Выбор
         <v-row class="calc__types bordered">
-          Агрегатное состояние
+          1. Агрегатное состояние
           <v-radio-group
             v-model="codRAO[0].value"
             row
@@ -55,7 +54,8 @@
               </v-col>
               <v-col>
                 <!-- {{ selected.Trans }} -->
-                {{ selected.AM > 92? 'да': 'нет' }}
+                <!-- {{ selected.Num_TM > 92? 'да': 'нет' }} -->
+                {{ isTrans(selected.Num_TM) }}
               </v-col>
             </v-row>
             <v-row>
@@ -72,15 +72,31 @@
 
         <v-row width="100%">
           <v-col cols="5">
-            <div height="100%">
+            <div class="h100">
+              <v-radio-group
+                v-model="favoriteNuclids"
+                row
+                class="calc__items"
+              >
+                <v-radio
+                  label="Все"
+                  :value=0
+                  class="calc__item"
+                ></v-radio>
+                <v-radio
+                  label="Часто используемые"
+                  :value=1
+                  class="calc__item"
+                ></v-radio>
+              </v-radio-group>							
               <v-text-field
                 label="Фильтр"
                 hide-details="auto"
                 clearable
                 v-model="filter"
               ></v-text-field>
-              <v-list>
-                <v-list-item-group class="calc__nuclids bordered">
+              <v-list class="">
+                <v-list-item-group class="left bordered">
                   <v-list-item
                     v-for="(item, i) in filteredNuclids"
                     :key="i"
@@ -111,8 +127,8 @@
             >
               Расчитать
             </v-btn>             -->
-            <v-list>
-              <v-list-item-group class="calc__nuclids bordered">
+            <v-list  class="calc__nuclids">
+              <v-list-item-group class="right bordered">
                 <v-list-item
                   v-for="(item, i) in selectedNuclids"
                   :key="i"
@@ -122,7 +138,7 @@
                   <div class="calc__nuclids-card">
                     {{ item.Name_RN }}
                     <v-text-field
-                      label="Удельная активность"
+                      label="Удельная активность (кБк/кг)"
                       v-model="item.UdA"
                       @change="isdisb(); calcCodRAO()"
                       :rules="rules"
@@ -151,6 +167,10 @@
                 Код РАО
                 <h2 class="mb-6">
                   {{ kodRAO }}
+                  <!-- `${codRAO[0].value} ${codRAO[1].value} ${codRAO[2].value} ${codRAO[3].value} ${codRAO[4].value} ${codRAO[5].value} ${codRAO[6].value} ${codRAO[7].value} ${codRAO[8].value} ${codRAO[10].value}`
+                  `{{ codRAO[0].value }} {{ codRAO[1].value }} {{ codRAO[2].value }} {{ codRAO[3].value }} {{ codRAO[4].value }} {{ codRAO[5].value }} {{ codRAO[6].value }} {{ codRAO[7].value }} {{ codRAO[8].value }} {{ codRAO[10].value }}` -->
+                  <!-- `{{ codRAO[0].value + codRAO[1].value + codRAO[2].value + codRAO[3].value + codRAO[4].value + codRAO[5].value + codRAO[6].value + codRAO[7].value + codRAO[8].value + codRAO[10].value }}` -->
+
                 </h2>
 
                 <v-btn 
@@ -163,7 +183,7 @@
                 </v-btn>            
 
 
-                <v-btn 
+                <!-- <v-btn 
                   width="100%"
                   class="mb-4"
                   @click="showKod = true"
@@ -176,7 +196,7 @@
                   @click="setShowKod"
                 >
                   Новый расчет
-                </v-btn>          
+                </v-btn>           -->
                 <v-row class="calc__types bordered">
                   ОЗРИ?
                   <v-radio-group
@@ -194,9 +214,9 @@
             </v-col>
           </v-row>
           <v-row class="pagebottom">
-            <v-col cols="5" class="bordered">
+            <v-col cols="6" class="bordered">
               <v-row class="calc__types bordered">
-                Содержание ядерных материалов
+                4. Содержание ядерных материалов
                 <v-radio-group
                   v-model="codRAO[3].value"
                   column
@@ -214,99 +234,99 @@
                   ></v-radio>
                 </v-radio-group>
               </v-row>
-
               <v-row class="calc__types bordered">
-                Класс РАО
+                7. Переработка
                 <v-radio-group
-                  v-model="codRAO[7].value"
+                  v-model="codRAO[6].value"
                   column
                   class="calc__items"
                 >
                   <v-radio
-                    label="0 - удаляемые, класс которых не установлен"
+                    label="0 - не подвергавшиеся переработке способами, перечисленными ниже"
                     :value=0
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="1 - удаляемые 1-го класса"
+                    label="1 - спрессованные (компактированные)"
                     :value=1
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="2 - удаляемые 2-го класса"
+                    label="2 - битумированные"
                     :value=2
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="3 - удаляемые 3-го класса"
+                    label="3 - цементированные"
                     :value=3
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="4 - удаляемые 4-го класса"
+                    label="4 - остеклованные"
                     :value=4
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="5 - удаляемые 5-го класса"
-                    :value=5
-                    class="calc__item"
-                  ></v-radio>
-                  <v-radio
-                    label="6 - удаляемые 6-го класса"
-                    :value=6
-                    class="calc__item"
-                  ></v-radio>
-                  <v-radio
-                    label="7 - особые РАО"
-                    :value=7
-                    class="calc__item"
-                  ></v-radio>
-                  <v-radio
-                    label="9 - прочие РАО"
+                    label="9 - омоноличенные (отвержденные) другим способом"
                     :value=9
                     class="calc__item"
                   ></v-radio>
                 </v-radio-group>
               </v-row>
+
             </v-col>
-            <v-col cols="7" class="bordered">
+            <v-col cols="6" class="bordered">
               <v-row>
                 <v-col cols="12">
                   <v-row class="calc__types bordered">
-                    Переработка
+                    8. Класс РАО
                     <v-radio-group
-                      v-model="codRAO[6].value"
+                      v-model="codRAO[7].value"
                       column
                       class="calc__items"
                     >
                       <v-radio
-                        label="0 - не подвергавшиеся переработке способами, перечисленными ниже"
+                        label="0 - удаляемые, класс которых не установлен"
                         :value=0
                         class="calc__item"
                       ></v-radio>
                       <v-radio
-                        label="1 - спрессованные (компактированные)"
+                        label="1 - удаляемые 1-го класса"
                         :value=1
                         class="calc__item"
                       ></v-radio>
                       <v-radio
-                        label="2 - битумированные"
+                        label="2 - удаляемые 2-го класса"
                         :value=2
                         class="calc__item"
                       ></v-radio>
                       <v-radio
-                        label="3 - цементированные"
+                        label="3 - удаляемые 3-го класса"
                         :value=3
                         class="calc__item"
                       ></v-radio>
                       <v-radio
-                        label="4 - остеклованные"
+                        label="4 - удаляемые 4-го класса"
                         :value=4
                         class="calc__item"
                       ></v-radio>
                       <v-radio
-                        label="9 - омоноличенные (отвержденные) другим способом"
+                        label="5 - удаляемые 5-го класса"
+                        :value=5
+                        class="calc__item"
+                      ></v-radio>
+                      <v-radio
+                        label="6 - удаляемые 6-го класса"
+                        :value=6
+                        class="calc__item"
+                      ></v-radio>
+                      <v-radio
+                        label="7 - особые РАО"
+                        :value=7
+                        class="calc__item"
+                      ></v-radio>
+                      <v-radio
+                        label="9 - прочие РАО"
                         :value=9
                         class="calc__item"
                       ></v-radio>
@@ -319,7 +339,7 @@
                   <v-row class="calc__types bordered">
                     <v-col cols="12">
                       <v-row>
-                        Тип РАО
+                        9-10. Тип РАО
                       </v-row>
                       <v-row>
                         <v-combobox
@@ -341,7 +361,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-row class="calc__types bordered">
-                    Пожароопасность
+                    11. Пожароопасность
                     <v-radio-group
                       v-model="codRAO[9].value"
                       column
@@ -378,11 +398,12 @@ export default {
       validNuclids: false,
       showKod: false,
       nuclids: [],
+      favoriteNuclids: 1,
       typeRAO: [],
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
-      
+      // longlife: false,
       codRAO: [
         {
           elem: "p01",
@@ -451,6 +472,7 @@ export default {
       this.selected.Trans = this.selected.AM > 92? 'да': 'нет' 
       this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`
       this.selected.UdA = 0
+      this.selected.Sostav = this.checkSostav(this.selected)
       this.selected.Udamza = this.selected.UdA / +this.selected.MOI
       this.selectedNuclids.push(this.selected)
       this.isdisb()
@@ -488,15 +510,173 @@ export default {
       console.log(this.showKod);
     },
     calcCodRAO() {
+      let longlife = false
+      let sostav = ["0","0","0"] //[бета, альфа, трансурановые]
       this.selectedNuclids.forEach(elem => {
+        if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31) longlife = true 
+
+        switch (elem.Sostav) {
+          case 0: sostav[0] = "1"; break
+          case 1: sostav[0] = "1"; break
+          case 2: sostav[1] = "1"; break
+          case 3: sostav[2] = "1"; break
+        }
         console.log("UdA = " + elem.UdA)
         console.log("MOI = " + elem.MOI)
         console.log("Udamza = " + elem.Udamza)
         elem.Udamza = elem.UdA / +elem.MOI
         console.log("Udamza = " + elem.Udamza)
       });
-    }
+      longlife ? this.codRAO[4].value = 1 : this.codRAO[4].value = 2
+      console.log(sostav);
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0") this.codRAO[2].value = 4
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 5
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 6
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 2
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 3
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 6
+      if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 1
 
+      this.kateg_RAO()
+    },
+    per_pr_min(perVal, per) {
+      switch (per) {
+        case "год": return perVal * 365 * 24 * 60
+        case "мес": return perVal * 31 * 24 * 60
+        case "сут": return perVal * 24 * 60
+        case "час": return perVal * 60
+        case "мин": return perVal
+      }
+    },
+    kateg_RAO() {
+      this.codRAO[1].value = 1
+      this.selectedNuclids.forEach(elem => {
+        // elem.Udamza = elem.UdA / +elem.MOI
+        if (this.codRAO[0].value === 1) {
+          if (elem.Sostav === 0) {
+            console.log("elem.Sostav"+elem.Sostav);
+            if (elem.UdA < 1*10e4) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e4 && elem.UdA < 1*10e8) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e8) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }
+          }
+          if (elem.Sostav === 1) {
+            if (elem.UdA < 1*10e3) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e3 && elem.UdA < 1*10e7) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e7) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }            
+          }
+          if (elem.Sostav === 2) {
+            if (elem.UdA < 1*10e2) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e2 && elem.UdA < 1*10e6) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e6) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }            
+          }
+          if (elem.Sostav === 3) {
+            if (elem.UdA < 10) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 10 && elem.UdA < 1*10e5) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e5) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }            
+            
+          }
+        }
+        if (this.codRAO[0].value === 2) {
+          if (elem.Sostav === 0) {
+            console.log("elem.Sostav"+elem.Sostav);
+            if (elem.UdA < 1*10e7) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            } else
+            if (elem.UdA >= 1*10e7 && elem.UdA < 1*10e8) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e8 && elem.UdA < 1*10e11) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e11) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }
+          }
+          if (elem.Sostav === 1) {
+            console.log("elem.Sostav"+elem.Sostav);
+            if (elem.UdA < 1*10e3) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            } else
+            if (elem.UdA >= 1*10e3 && elem.UdA < 1*10e4) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e4 && elem.UdA < 1*10e7) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e7) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }
+          }
+          if (elem.Sostav === 2) {
+            console.log("elem.Sostav"+elem.Sostav);
+            if (elem.UdA < 1*10e2) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            } else
+            if (elem.UdA >= 1*10e2 && elem.UdA < 1*10e3) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e3 && elem.UdA < 1*10e6) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e6) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }
+          }
+          if (elem.Sostav === 3) {
+            console.log("elem.Sostav"+elem.Sostav);
+            if (elem.UdA < 10) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            } else
+            if (elem.UdA >= 10 && elem.UdA < 1*10e2) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            } else
+            if (elem.UdA >= 1*10e2 && elem.UdA < 1*10e5) {
+              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
+            } else
+            if (elem.UdA >= 1*10e5) {
+              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
+            }
+          }
+        }        
+        if (this.codRAO[0].value === 3) {
+          this.codRAO[1].value = 9
+        }        
+      });      
+
+    },
+    checkSostav(selected) {
+      if (selected.Name_RN === "тритий") return 0 //тритий
+      if (selected.Num_TM > 92) return 3 //трансурановые
+      if (selected.Kod_gruppy === "б") return 1 //бета не трансурановые
+      if (selected.Kod_gruppy === "а") return 2 //альфа не трансурановые
+    },
+    isTrans(Num_TM) {
+      return Num_TM > 92? "да": "нет"
+    },
   },
   mounted() {
     this.nuclids = require('@/db/nuclids.json');
@@ -505,8 +685,8 @@ export default {
   computed: {
     filteredNuclids () {
       return this.nuclids.filter((elem) => {
-        if (this.filter === '' || !this.filter) return true
-        else return elem.Name_RN.indexOf(this.filter) > -1
+        if ((this.filter === '' || !this.filter) && elem.favorite === this.favoriteNuclids) return true
+        else return (elem.Name_RN.indexOf(this.filter) > -1 && elem.favorite === this.favoriteNuclids)
       })
     },
     filteredTypeRAO () {
@@ -522,9 +702,6 @@ export default {
       })
       console.log(cod);
       return cod
-    },
-    trans() {
-      return 'AM > 92? "да": "нет"' 
     },
     enabledBTN() {
       return this.validNuclids && this.codRAO[8].value != "**"
@@ -560,8 +737,9 @@ html
 
   &__nuclids
     width: 100%
-    height: calc(98vh - 440px)
-    overflow: scroll
+    // height: 100%
+    // height: calc(98vh - 440px)
+    // overflow: scroll
 
     &-card
       border-bottom: 1px solid #ccc
@@ -597,8 +775,12 @@ html
 
 .left
   // height: 100%
-  overflow: scroll
-  height: calc(98vh - 440px)
+  overflow-y: scroll
+  height: calc(98vh - 520px)
+  // height: calc(98% - 550px)
+  max-height: 10%
 .right
-  height: calc(98vh - 440px)
+  height: calc(98vh - 400px)
+.h100
+  height: 100%
 </style>
