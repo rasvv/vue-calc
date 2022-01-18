@@ -5,7 +5,7 @@
   >
     <v-row class="calc__form bordered">
       <v-col cols="4" class="calc__selectnuclids borred">
-        <v-row class="calc__types bordered">
+        <!-- <v-row class="calc__types bordered">
           1. Агрегатное состояние
           <v-radio-group
             v-model="codRAO[0].value"
@@ -29,7 +29,24 @@
               class="calc__item"
             ></v-radio>
           </v-radio-group>
-        </v-row>
+        </v-row> -->
+        <v-row class="calc__types bordered">
+          {{ codRAO[0].desc }}
+          <v-radio-group
+            v-model="codRAO[0].value"
+            row
+            class="calc__items"
+            @change="codRAO[8].value = '**'"
+          >
+            <v-radio
+              v-for="(item, i) in codRAO[0].radios"
+              :key="i"
+              :label="item.text"
+              :value="item.id"
+              class="calc__item"
+            ></v-radio>
+          </v-radio-group>
+        </v-row>        
         <v-row class="bordered">
           <v-col>
             <v-row>
@@ -168,7 +185,16 @@
                 <h2 class="mb-6">
                   <!-- {{ kodRAO }} -->
                   <!-- `${codRAO[0].value} ${codRAO[1].value} ${codRAO[2].value} ${codRAO[3].value} ${codRAO[4].value} ${codRAO[5].value} ${codRAO[6].value} ${codRAO[7].value} ${codRAO[8].value} ${codRAO[10].value}`-->
-                  <span> {{ codRAO[0].value }} </span>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span v-bind="attrs" v-on="on">
+                        {{ codRAO[0].value }}
+                      </span>
+                    </template>
+                    <span>{{ codRAO[0].desc }}</span> <br><br>
+                    <div class="text-center">{{ codRAO[0].elem }}</div>
+                  </v-tooltip>
+                  <!-- <span> {{ codRAO[0].value }} </span> -->
                    {{ codRAO[1].value }} {{ codRAO[2].value }} {{ codRAO[3].value }} {{ codRAO[4].value }} {{ codRAO[5].value }} {{ codRAO[6].value }} {{ codRAO[7].value }} {{ codRAO[8].value }} {{ codRAO[9].value }}
                   <!-- `{{ codRAO[0].value + codRAO[1].value + codRAO[2].value + codRAO[3].value + codRAO[4].value + codRAO[5].value + codRAO[6].value + codRAO[7].value + codRAO[8].value + codRAO[10].value }}` -->
 
@@ -408,7 +434,22 @@ export default {
       codRAO: [
         {
           elem: "p01",
-          value: 2
+          desc: "1. Агрегатное состояние",
+          value: 2,
+          radios: [
+            {
+              id: 1,
+              text: "Жидкие РАО"
+            },
+            {
+              id: 2,
+              text: "Твердые РАО"
+            },
+            {
+              id: 3,
+              text: "Газообразные РАО"
+            }
+          ]
         },
         {
           elem: "p02",
