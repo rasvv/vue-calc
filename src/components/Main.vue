@@ -42,7 +42,7 @@
             </v-row>
             <v-row>
               <v-col>
-                Вид илучения
+                Вид излучения
               </v-col>
               <v-col>
                 {{ selected.Vid_izluch }}
@@ -63,7 +63,7 @@
                 ПЗУА, Бк/г
               </v-col>
               <v-col>
-                {{ selected.MZUA }}
+                {{ codRAO[0].value === 1 ? selected.UdA_GRO : selected.UdA_TRO }}
               </v-col>
             </v-row>
 
@@ -166,9 +166,10 @@
               <div>
                 Код РАО
                 <h2 class="mb-6">
-                  {{ kodRAO }}
-                  <!-- `${codRAO[0].value} ${codRAO[1].value} ${codRAO[2].value} ${codRAO[3].value} ${codRAO[4].value} ${codRAO[5].value} ${codRAO[6].value} ${codRAO[7].value} ${codRAO[8].value} ${codRAO[10].value}`
-                  `{{ codRAO[0].value }} {{ codRAO[1].value }} {{ codRAO[2].value }} {{ codRAO[3].value }} {{ codRAO[4].value }} {{ codRAO[5].value }} {{ codRAO[6].value }} {{ codRAO[7].value }} {{ codRAO[8].value }} {{ codRAO[10].value }}` -->
+                  <!-- {{ kodRAO }} -->
+                  <!-- `${codRAO[0].value} ${codRAO[1].value} ${codRAO[2].value} ${codRAO[3].value} ${codRAO[4].value} ${codRAO[5].value} ${codRAO[6].value} ${codRAO[7].value} ${codRAO[8].value} ${codRAO[10].value}`-->
+                  <span> {{ codRAO[0].value }} </span>
+                   {{ codRAO[1].value }} {{ codRAO[2].value }} {{ codRAO[3].value }} {{ codRAO[4].value }} {{ codRAO[5].value }} {{ codRAO[6].value }} {{ codRAO[7].value }} {{ codRAO[8].value }} {{ codRAO[9].value }}
                   <!-- `{{ codRAO[0].value + codRAO[1].value + codRAO[2].value + codRAO[3].value + codRAO[4].value + codRAO[5].value + codRAO[6].value + codRAO[7].value + codRAO[8].value + codRAO[10].value }}` -->
 
                 </h2>
@@ -223,13 +224,13 @@
                   class="calc__items"
                 >
                   <v-radio
-                    label="0 - не содержащие ЯМ"
-                    :value=0
+                    label="1 - не содержащие ЯМ"
+                    :value=1
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="1 - содержащие ЯМ"
-                    :value=1
+                    label="2 - содержащие ЯМ"
+                    :value=2
                     class="calc__item"
                   ></v-radio>
                 </v-radio-group>
@@ -419,15 +420,15 @@ export default {
         },
         {
           elem: "p04",
-          value: 0
-        },
+          value: 1
+				},	
         {
           elem: "p05",
           value: "*"
         },
         {
           elem: "p06",
-          value: "*"
+          value: 0
         },
         {
           elem: "p07",
@@ -455,7 +456,7 @@ export default {
         { text: 'Вид', value: 'Vid_izluch' },
         { text: 'Трансурановый', value: 'Trans' },
         { text: 'ПЗУА', value: 'UdA_TRO' },
-        { text: 'УдА / ПЗУА', value: 'Udamza' },
+        { text: 'Период ПО', value: 'Potential' },
       ],		
       selectedTypes: [],
       desc: "",
@@ -469,11 +470,12 @@ export default {
   // },
   methods: {
     addNuclid() {
-      this.selected.Trans = this.selected.AM > 92? 'да': 'нет' 
+      this.selected.Trans = this.isTrans(this.selected.Num_TM)
       this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`
       this.selected.UdA = 0
       this.selected.Sostav = this.checkSostav(this.selected)
       this.selected.Udamza = this.selected.UdA / +this.selected.MOI
+      this.selected.Potential = 0
       this.selectedNuclids.push(this.selected)
       this.isdisb()
     },
@@ -509,48 +511,28 @@ export default {
       this.$emit(this.showKod = false)
       console.log(this.showKod);
     },
-    calcCodRAO() {
-      let longlife = false
-      let sostav = ["0","0","0"] //[бета, альфа, трансурановые]
-      this.selectedNuclids.forEach(elem => {
-        if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31) longlife = true 
-
-        switch (elem.Sostav) {
-          case 0: sostav[0] = "1"; break
-          case 1: sostav[0] = "1"; break
-          case 2: sostav[1] = "1"; break
-          case 3: sostav[2] = "1"; break
-        }
-        console.log("UdA = " + elem.UdA)
-        console.log("MOI = " + elem.MOI)
-        console.log("Udamza = " + elem.Udamza)
-        elem.Udamza = elem.UdA / +elem.MOI
-        console.log("Udamza = " + elem.Udamza)
-      });
-      longlife ? this.codRAO[4].value = 1 : this.codRAO[4].value = 2
-      console.log(sostav);
-      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0") this.codRAO[2].value = 4
-      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 5
-      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 6
-      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 2
-      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 3
-      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 6
-      if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 1
-
-      this.kateg_RAO()
-    },
     per_pr_min(perVal, per) {
       switch (per) {
-        case "год": return perVal * 365 * 24 * 60
+        case "лет": return perVal * 365 * 24 * 60
         case "мес": return perVal * 31 * 24 * 60
         case "сут": return perVal * 24 * 60
         case "час": return perVal * 60
         case "мин": return perVal
       }
     },
+    per_pr_year(perVal, per) {
+      switch (per) {
+        case "лет": return perVal
+        case "мес": return perVal / 12
+        case "сут": return perVal / 365
+        case "час": return perVal / 24 / 365
+        case "мин": return perVal / 60 / 24 / 365
+      }
+    },
     kateg_RAO() {
-      this.codRAO[1].value = 1
+      this.codRAO[1].value = 0
       this.selectedNuclids.forEach(elem => {
+				console.log("elem.UdA = " + elem.UdA)
         // elem.Udamza = elem.UdA / +elem.MOI
         if (this.codRAO[0].value === 1) {
           if (elem.Sostav === 0) {
@@ -601,63 +583,67 @@ export default {
           }
         }
         if (this.codRAO[0].value === 2) {
+				console.log("this.codRAO[1].value = " + this.codRAO[1].value)
+				console.log("elem.Sostav = " + elem.Sostav)
+
           if (elem.Sostav === 0) {
             console.log("elem.Sostav"+elem.Sostav);
-            if (elem.UdA < 1*10e7) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            if (elem.UdA < 1e7) {
+              if (this.codRAO[1].value < 0) this.codRAO[1].value = 0
             } else
-            if (elem.UdA >= 1*10e7 && elem.UdA < 1*10e8) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            if (elem.UdA >= 1e7 && elem.UdA < 1e8) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
             } else
-            if (elem.UdA >= 1*10e8 && elem.UdA < 1*10e11) {
+            if (elem.UdA >= 1e8 && elem.UdA < 1e11) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
             } else
-            if (elem.UdA >= 1*10e11) {
+            if (elem.UdA >= 1e11) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
             }
           }
           if (elem.Sostav === 1) {
             console.log("elem.Sostav"+elem.Sostav);
-            if (elem.UdA < 1*10e3) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            if (elem.UdA < 1e3) {
+              if (this.codRAO[1].value === 0) this.codRAO[1].value = 0
             } else
-            if (elem.UdA >= 1*10e3 && elem.UdA < 1*10e4) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            if (elem.UdA >= 1e3 && elem.UdA < 1e4) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
             } else
-            if (elem.UdA >= 1*10e4 && elem.UdA < 1*10e7) {
+            if (elem.UdA >= 1e4 && elem.UdA < 1e7) {
+							console.log("elem.UdA >= 1*10e4 && elem.UdA < 1*10e7 " + this.codRAO[1].value)
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
             } else
-            if (elem.UdA >= 1*10e7) {
+            if (elem.UdA >= 1e7) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
             }
           }
           if (elem.Sostav === 2) {
             console.log("elem.Sostav"+elem.Sostav);
-            if (elem.UdA < 1*10e2) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+            if (elem.UdA < 1e2) {
+              if (this.codRAO[1].value === 0) this.codRAO[1].value = 0
             } else
-            if (elem.UdA >= 1*10e2 && elem.UdA < 1*10e3) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            if (elem.UdA >= 1e2 && elem.UdA < 1e3) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
             } else
-            if (elem.UdA >= 1*10e3 && elem.UdA < 1*10e6) {
+            if (elem.UdA >= 1e3 && elem.UdA < 1e6) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
             } else
-            if (elem.UdA >= 1*10e6) {
+            if (elem.UdA >= 1e6) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
             }
           }
           if (elem.Sostav === 3) {
             console.log("elem.Sostav"+elem.Sostav);
             if (elem.UdA < 10) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 0
+              if (this.codRAO[1].value === 0) this.codRAO[1].value = 0
             } else
-            if (elem.UdA >= 10 && elem.UdA < 1*10e2) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 1
+            if (elem.UdA >= 10 && elem.UdA < 1e2) {
+              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1
             } else
-            if (elem.UdA >= 1*10e2 && elem.UdA < 1*10e5) {
+            if (elem.UdA >= 1e2 && elem.UdA < 1e5) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2
             } else
-            if (elem.UdA >= 1*10e5) {
+            if (elem.UdA >= 1e5) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3
             }
           }
@@ -677,6 +663,57 @@ export default {
     isTrans(Num_TM) {
       return Num_TM > 92? "да": "нет"
     },
+    calcPotential(selected) {
+      let udal = selected.MOI
+      console.log("calcPotential")
+      console.log(selected.UdA_TRO)
+
+      if (this.codRAO[0].value === 1) {udal = udal * selected.UdA_GRO}
+      let per = this.per_pr_year(selected.Period_p_r, selected.Edinica_izmer_p_r)
+
+      let pot = (1.44 * Math.log(selected.UdA / udal) * per).toFixed(2)
+      console.log(selected.Name_RN + " = " + pot)
+			selected.Potential = pot
+			return pot
+    },
+    calcCodRAO() {
+      let longlife = false
+			this.codRAO[5].value = 0
+      let sostav = ["0","0","0"] //[бета, альфа, трансурановые]
+      this.selectedNuclids.forEach(elem => {
+        if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31) longlife = true 
+
+        switch (elem.Sostav) {
+          case 0: sostav[0] = "1"; break
+          case 1: sostav[0] = "1"; break
+          case 2: sostav[1] = "1"; break
+          case 3: sostav[2] = "1"; break
+        }
+        console.log("UdA = " + elem.UdA)
+        console.log("MOI = " + elem.MOI)
+        console.log("Udamza = " + elem.Udamza)
+        elem.Udamza = elem.UdA / +elem.MOI
+        console.log("Udamza = " + elem.Udamza)
+        let pot = this.calcPotential(elem)
+        console.log("pot = " + pot)
+				if (pot > 0) {if (this.codRAO[5].value < 1) this.codRAO[5].value = 1}
+				if (pot > 100) {if (this.codRAO[5].value < 2) this.codRAO[5].value = 2}
+				if (pot > 500) {if (this.codRAO[5].value < 3) this.codRAO[5].value = 3}
+				console.log("this.codRAO[5].value = " + this.codRAO[5].value)
+      })
+      longlife ? this.codRAO[4].value = 1 : this.codRAO[4].value = 2
+      console.log(sostav);
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0") this.codRAO[2].value = 4
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 5
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 6
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "0") this.codRAO[2].value = 2
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "1") this.codRAO[2].value = 3
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 6
+      if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1") this.codRAO[2].value = 1
+
+      this.kateg_RAO()
+
+    },
   },
   mounted() {
     this.nuclids = require('@/db/nuclids.json');
@@ -690,10 +727,11 @@ export default {
       })
     },
     filteredTypeRAO () {
-      return this.typeRAO.filter((elem) => {
-        if (elem.section === this.codRAO[0].value) return true
-        else return elem.section === this.codRAO[0].value
-      })
+      // return this.typeRAO.filter((elem) => {
+      //   if (elem.section === this.codRAO[0].value) return true
+      //   else return elem.section === this.codRAO[0].value
+      // })
+      return this.typeRAO
     },
     kodRAO () {
       let cod = ''
