@@ -105,47 +105,7 @@
               <div>
                 Код РАО
                 <h2 class="mb-6">
-                  <Tooltip :codRAO="codRAO" :idx="0" />
-                  <Tooltip :codRAO="codRAO" :idx="1" />
-                  <Tooltip :codRAO="codRAO" :idx="2" />
-                  <Tooltip :codRAO="codRAO" :idx="3" />
-                  <Tooltip :codRAO="codRAO" :idx="4" />
-                  <Tooltip :codRAO="codRAO" :idx="5" />
-                  <Tooltip :codRAO="codRAO" :idx="6" />
-                  <Tooltip :codRAO="codRAO" :idx="7" />
-                  <Tooltip :codRAO="codRAO" :idx="8" />
-                  <Tooltip :codRAO="codRAO" :idx="9" />
-
-                  <!-- {{ codRAO[1].value }}
-                  {{ codRAO[2].value }}
-                  <Tooltip
-                    :value="codRAO[3].value"
-                    :description="codRAO[3].description"
-                    :text="activeMenu(3)[0].text"
-                  />
-                  {{ codRAO[4].value }}
-                  {{ codRAO[5].value }}
-                  <Tooltip
-                    :value="codRAO[6].value"
-                    :description="codRAO[6].description"
-                    :text="activeMenu(6)[0].text"
-                  />
-                  <Tooltip
-                    :value="codRAO[7].value"
-                    :description="codRAO[7].description"
-                    :text="activeMenu(7)[0].text"
-                  />
-                  <Tooltip
-                    :value="codRAO[8].value"
-                    :description="codRAO[8].description"
-                    :text="activeMenu(8)[0].text"
-                  />
-                  <Tooltip
-                    :value="codRAO[9].value"
-                    :description="codRAO[9].description"
-                    :text="activeMenu(9)[0].text"
-                  /> -->
-                  <!-- `{{ codRAO[0].value + codRAO[1].value + codRAO[2].value + codRAO[3].value + codRAO[4].value + codRAO[5].value + codRAO[6].value + codRAO[7].value + codRAO[8].value + codRAO[10].value }}` -->
+                  <Tooltip v-for="i in 11" :key="i" :codRAO="codRAO" :idx="i-1" />
                 </h2>
 
                 <v-btn
