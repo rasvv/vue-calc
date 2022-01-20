@@ -2,20 +2,13 @@
   <v-container class="calc" fluid>
     <v-row class="calc__form bordered">
       <v-col cols="4" class="calc__selectnuclids borred">
-        <v-row class="calc__types bordered">
+        <v-row class="calc__types bordered mb-4">
           <Radios :codRAO="codRAO" :idx="0" :row="true" />
-        </v-row>
-        <v-row class="bordered">
-          <RadioNuclids
-            :codRAO="codRAO"
-            :selected="selected"
-            :trans="isTrans(selected.Num_TM)"
-          />
         </v-row>
 
         <v-row width="100%">
           <v-col cols="5">
-            <div class="h100">
+            <div>
               <v-radio-group v-model="favoriteNuclids" row class="calc__items">
                 <v-radio label="Все" :value="0" class="calc__item"></v-radio>
                 <v-radio
@@ -30,7 +23,7 @@
                 clearable
                 v-model="filter"
               ></v-text-field>
-              <v-list class="">
+              <v-list max-height="50vh" dense>
                 <v-list-item-group class="left bordered">
                   <v-list-item
                     v-for="(item, i) in filteredNuclids"
@@ -62,6 +55,30 @@
             >
               Расчитать
             </v-btn>             -->
+            <v-radio-group v-model="favoriteNuclids" column class="calc__items">
+              <v-radio
+                label="Удельная активность"
+                :value="0"
+                class="calc__item"
+              ></v-radio>
+              <v-radio
+                label="Суммарная активность + %"
+                :value="1"
+                class="calc__item"
+              ></v-radio>
+              <v-radio
+                label="Активность + масса"
+                :value="2"
+                class="calc__item"
+              ></v-radio>
+            </v-radio-group>
+            <v-text-field
+              label="Фильтр"
+              hide-details="auto"
+              clearable
+              v-model="filter"
+            ></v-text-field>
+
             <v-list class="calc__nuclids">
               <v-list-item-group class="right bordered">
                 <v-list-item
@@ -91,6 +108,14 @@
             </v-list>
           </v-col>
         </v-row>
+
+        <v-row class="bordered">
+          <RadioNuclids
+            :codRAO="codRAO"
+            :selected="selected"
+            :trans="isTrans(selected.Num_TM)"
+          />
+        </v-row>
       </v-col>
       <v-col cols="8" class="calc__kod">
         <v-container>
@@ -105,7 +130,12 @@
               <div>
                 Код РАО
                 <h2 class="mb-6">
-                  <Tooltip v-for="i in 11" :key="i" :codRAO="codRAO" :idx="i-1" />
+                  <Tooltip
+                    v-for="i in 11"
+                    :key="i"
+                    :codRAO="codRAO"
+                    :idx="i - 1"
+                  />
                 </h2>
 
                 <v-btn
@@ -218,6 +248,7 @@ export default {
       showKod: false,
       nuclids: [],
       favoriteNuclids: 1,
+      showUda: 1,
       typeRAO: [],
       selected: {},
       selectedMin: {},
@@ -618,7 +649,7 @@ html
 .bordered
 	margin: 0
 	width: 100%
-	border: 1px solid #aaa
+	border: 1px solid lightblue
 
 .borred
 	height: 97vh
@@ -633,13 +664,12 @@ html
 	align-items: center
 
 .left
-// height: 100%
 	overflow-y: scroll
-	height: calc(98vh - 520px)
-// height: calc(98% - 550px)
-	max-height: 10%
+	max-height: 50vh
+
 .right
-	height: calc(98vh - 400px)
+	height: 40vh
+
 .h100
 	height: 100%
 </style>
