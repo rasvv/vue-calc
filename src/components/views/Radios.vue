@@ -3,10 +3,10 @@
     {{ codRAO[idx].description }}
     <v-radio-group
       v-model="codRAO[idx].value"
-			:row = "row"
-			:column = "!row"
+      :row="row"
+      :column="!row"
       class="calc__items"
-			@change="changeValue"
+      @change="changeValue"
     >
       <v-radio
         v-for="(item, i) in codRAO[idx].radios"
@@ -21,19 +21,16 @@
 
 <script>
 export default {
-  props: ['codRAO', 'idx', 'row'],
+  props: ["codRAO", "idx", "row"],
   data() {
-    return {
-
-    }
+    return {};
   },
-	methods: {
-		changeValue() {
-			if (this.idx === 0) this.codRAO[8].value = '**'
-		}		
-	} 
-}
+  methods: {
+    changeValue() {
+      if (this.idx === 0) this.codRAO[8].value = "**";
+    },
+  },
+};
 </script>
 <style lang="sass">
-
 </style>

@@ -1,19 +1,19 @@
 <template>
-	<v-app>
+  <v-app>
     <v-main>
-      <Main/>
+      <Calculator />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Main from './components/Main';
+import Calculator from "./components/Calculator.vue";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    Main,
+    Calculator,
   },
 
   data: () => ({
@@ -24,10 +24,9 @@ export default {
 
 <style lang="sass" scoped>
 html
-  max-height: 100vh
+	max-height: 100vh
 
 @media (min-width: 2800px)
-  .container
-    max-width: 3700px !important
-
+	.container
+		max-width: 3700px !important
 </style>
