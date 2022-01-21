@@ -10,7 +10,9 @@ export default {
       showKod: false,
       nuclids: [],
       favoriteNuclids: 1,
-      showUda: 1,
+      showUda: 0,
+			sumAct: 0,
+			obUdAct: 0,
       typeRAO: [],
       selected: {},
       selectedMin: {},
@@ -61,9 +63,9 @@ export default {
       // this.selected = this.nuclids[i]
     },
     isdisb() {
+      console.log("isdisb");
       let per = false;
       if (this.selectedNuclids.length === 0) return false;
-      console.log("isdisb");
       console.log(this.selectedNuclids);
       this.selectedNuclids.forEach((elem) => {
         console.log(elem.UdA);
@@ -79,7 +81,7 @@ export default {
       let items = {};
       items.id = this.selectedTypes.cod;
       items.text = this.desc;
-      this.codRAO[8].radios.splice(0, 5, items);
+      // this.codRAO[8].radios.splice(0, 5, items);
       console.log(this.codRAO[8].radios);
     },
     setOZRI() {
@@ -91,6 +93,9 @@ export default {
       this.$emit((this.showKod = false));
       console.log(this.showKod);
     },
+    changeValue() {
+      if (this.idx === 0) this.codRAO[8].value = "**";
+    },		
     per_pr_min(perVal, per) {
       switch (per) {
         case "лет":
@@ -120,6 +125,7 @@ export default {
       }
     },
     kateg_RAO() {
+			console.log("--=== kateg_RAO ===--");
       this.codRAO[1].value = 0;
       this.selectedNuclids.forEach((elem) => {
         console.log("elem.UdA = " + elem.UdA);
@@ -236,7 +242,7 @@ export default {
     },
     calcPotential(selected) {
       let udal = selected.MOI;
-      console.log("calcPotential");
+      console.log("--=== calcPotential ===--");
       console.log(selected.UdA_TRO);
 
       if (this.codRAO[0].value === 1) {
@@ -293,11 +299,11 @@ export default {
         console.log("this.codRAO[5].value = " + this.codRAO[5].value);
       });
       console.log(this.selectedNuclids);
-      this.selectedNuclids.splice(
-        0,
-        this.selectedNuclids.length,
-        this.selectedNuclids
-      );
+      // this.selectedNuclids.splice(
+      //   0,
+      //   this.selectedNuclids.length,
+      //   this.selectedNuclids
+      // );
       console.log(this.selectedNuclids);
 
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);

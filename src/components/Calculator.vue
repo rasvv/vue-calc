@@ -2,19 +2,57 @@
   <v-container class="calc" fluid>
     <v-row class="calc__form bordered">
       <v-col cols="6" class="calc__selectnuclids">
-        <v-row class="calc__types mb-4 d-flex bordered">
-          <v-col cols="8" class="calc__types">
-            <!-- Агрегатное состояние -->
-            <Radios :codRAO="codRAO" :idx="0" :row="true" class="bordered" />
+        <v-row class="">
+          <v-col cols="6" class="calc__types d-flex align-stretch">
+            <v-container class="bordered">
+              Код РАО
+              <h1 class="my-6">
+                <Tooltip
+                  v-for="i in 11"
+                  :key="i"
+                  :codRAO="codRAO"
+                  :idx="i - 1"
+                />
+              </h1>
+            </v-container>
           </v-col>
-          <v-col cols="4" class="calc__types">
+          <v-col cols="6" class="calc__types d-flex align-stretch">
+            <v-container class="bordered">
+              <v-btn :disabled="!enabledBTN" width="100%" @click="calcCodRAO">
+                Расчитать
+              </v-btn>
+
+              <v-btn :disabled="true" width="100%" @click="showKod = true">
+                Скопировать код
+              </v-btn>
+              <v-btn :disabled="true" width="100%" @click="setShowKod">
+                Новый расчет
+              </v-btn>
+            </v-container>
+          </v-col>
+        </v-row>
+
+        <v-row class="calc__types">
+          <!-- Агрегатное состояние -->
+          <Radios
+            :codRAO="codRAO"
+            :idx="0"
+            :row="true"
+            :wrap="true"
+            :changeValie="changeValue"
+            class="bordered"
+          />
+        </v-row>
+
+        <v-row class="">
+          <v-col cols="4" class="calc__types d-flex align-stretch">
             <v-container class="bordered">
               ОЗРИ?
               <v-radio-group
                 v-model="ozri"
-                row
+                column
                 :disabled="codRAO[0].value != 2"
-                class="calc__items"
+                class="calc__items pt-4"
                 @change="setOZRI"
               >
                 <v-radio label="Да" :value="1" class="calc__item"></v-radio>
@@ -22,107 +60,65 @@
               </v-radio-group>
             </v-container>
           </v-col>
+          <v-col cols="8" class="calc__types d-flex align-stretch">
+            <!-- Содержание ядерных материалов -->
+            <Radios :codRAO="codRAO" :idx="3" class="bordered" />
+          </v-col>
         </v-row>
 
-        <v-row class="pagebottom">
-          <v-col cols="6">
-            <v-row class="calc__types">
-              <!-- Содержание ядерных материалов -->
-              <Radios :codRAO="codRAO" :idx="3" class="bordered" />
-            </v-row>
-            <v-row class="calc__types">
-              <!-- Способ переработки -->
-              <Radios :codRAO="codRAO" :idx="6" class="bordered" />
-            </v-row>
+        <v-row>
+          <v-col cols="6" class="calc__types d-flex align-stretch">
+            <!-- Способ переработки -->
+            <Radios :codRAO="codRAO" :idx="6" class="bordered" />
           </v-col>
-          <v-col cols="6">
-            <v-row>
-              <v-col cols="12">
-                <v-row class="calc__types">
-                  <!-- Класс РАО -->
-                  <Radios :codRAO="codRAO" :idx="7" class="bordered" />
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-row class="calc__types bordered">
-                  <v-col cols="12">
-                    <!-- Тип РАО -->
-                    <v-row> 9-10. Тип РАО </v-row>
-                    <v-row>
-                      <v-combobox
-                        v-model="selectedTypes"
-                        :items="filteredTypeRAO"
-                        item-text="description"
-                        item-value="cod"
-                        dense
-                        clearable
-                        @change="parseSelected"
-                      >
-                      </v-combobox>
-                    </v-row>
-                    <v-row class="mh">
-                      {{ desc }}
-                    </v-row>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="6">
-                <v-row class="calc__types bordered">
-                  <!-- Пожароопасность -->
-                  <Radios :codRAO="codRAO" :idx="9" />
-                </v-row>
-              </v-col>
-            </v-row>
+          <v-col cols="6" class="calc__types d-flex align-stretch">
+            <!-- Класс РАО -->
+            <Radios :codRAO="codRAO" :idx="7" class="bordered" />
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col cols="12" class="calc__types d-flex align-stretch">
+            <v-container class="bordered">
+              <!-- Тип РАО -->
+              9-10. Тип РАО
+
+              <v-combobox
+                v-model="selectedTypes"
+                :items="filteredTypeRAO"
+                item-text="description"
+                item-value="cod"
+                dense
+                clearable
+                @change="parseSelected"
+              >
+              </v-combobox>
+
+              {{ desc }}
+            </v-container>
+          </v-col>
+        </v-row>
+
+        <v-row class="calc__types">
+          <!-- Пожароопасность -->
+          <Radios
+            :codRAO="codRAO"
+            :idx="9"
+            :row="true"
+            :wrap="true"
+            class="bordered"
+          />
+        </v-row>
       </v-col>
-      <v-col cols="6" class="calc__kod">
-        <v-container>
-          <v-row class="pagetop">
-            <v-col cols="9" class="bordered">
+      <v-col cols="6">
+        <v-container class="bordered">
+          <h2>Радионуклидный состав</h2>
+          <v-row class="pagetop" v-show="false">
+            <v-col cols="12" class="bordered">
               <v-data-table
                 :headers="headers"
                 :items="selectedNuclids"
               ></v-data-table>
-            </v-col>
-            <v-col cols="3" class="bordered">
-              <div>
-                Код РАО
-                <h2 class="mb-6">
-                  <Tooltip
-                    v-for="i in 11"
-                    :key="i"
-                    :codRAO="codRAO"
-                    :idx="i - 1"
-                  />
-                </h2>
-
-                <v-btn
-                  :disabled="!enabledBTN"
-                  width="100%"
-                  class="mb-4"
-                  @click="calcCodRAO"
-                >
-                  Расчитать
-                </v-btn>
-
-                <!-- <v-btn 
-                  width="100%"
-                  class="mb-4"
-                  @click="showKod = true"
-                >
-                  Скопировать код
-                </v-btn>          
-                <v-btn 
-                  width="100%"
-                  class="mb-10"
-                  @click="setShowKod"
-                >
-                  Новый расчет
-                </v-btn>           -->
-              </div>
             </v-col>
           </v-row>
 
@@ -178,7 +174,7 @@
                   type="number"
                   hide-details="auto"
                   clearable
-                  v-model="SumAct"
+                  v-model="sumAct"
                 ></v-text-field>
                 <v-text-field
                   v-show="showUda === 2"
@@ -186,7 +182,7 @@
                   type="number"
                   hide-details="auto"
                   clearable
-                  v-model="ObUdAct"
+                  v-model="obUdAct"
                 ></v-text-field>
               </v-col>
             </div>
@@ -230,15 +226,13 @@
                       <div class="calc__nuclids-card">
                         {{ item.Name_RN }}
                         <v-text-field
-                          label="Удельная активность (кБк/кг)"
+                          label="Удельная активность (Бк/г)"
                           v-model="item.UdA"
                           type="number"
-                          @change="
-                            isdisb();
-                            calcCodRAO();
-                          "
+                          @change="isdisb()"
                           :rules="rules"
                           hide-details="auto"
+                          suffix="Бк/г"
                         ></v-text-field>
                       </div>
 
@@ -268,89 +262,89 @@
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
 html
-	box-sizing: border-box
-	margin: 0
-	padding: 0
+  box-sizing: border-box
+  margin: 0
+  padding: 0
 
 .calc
-	&__form
-		min-height: 1020px
-		height: 98vh
+  &__form
+    min-height: 1020px
+    height: 98vh
 
-	&__types
-		padding: 5px
-		// margin: 0
+  &__types
+    padding: 5px
+    // margin: 0
 
-	&__item
-		display: inline-block
+  &__item
+    display: inline-block
 
-	&__items
-		width: 100%
-		display: flex
-		justify-content: space-around
-		display: block
-		gap: 30px
+  &__items
+    width: 100%
+    display: flex
+    justify-content: space-around
+    display: block
+    gap: 30px
 
-	&__nuclids
-		width: 100%
+  &__nuclids
+    width: 100%
 
-		&-card
-			border-bottom: 1px solid #ccc
-			width: 100%
-			padding: 8px
-			justify-content: start
+    &-card
+      border-bottom: 1px solid #ccc
+      width: 100%
+      padding: 8px
+      justify-content: start
 
-	&__selectnuclids
+  &__selectnuclids
 // max-height: 95vh
 
 .v-btn:not(.v-btn--round).v-size--default
-	width: 100%
-	min-width: 0
-	padding: 0
-	margin-bottom: 10px
+  width: 100%
+  min-width: 0
+  padding: 0
+  margin-bottom: 10px
 
 .bordered
-	margin: 0
-	width: 100%
-	border: 1px solid lightblue
+  margin: 0
+  width: 100%
+  border: 1px solid lightblue
 
 .borred
-	height: 97vh
+  height: 97vh
 
 .buttons
-	padding: 0
-	gap: 30px
-	width: 100%
-	display: flex
-	flex-direction: column
-	justify-content: center
-	align-items: center
+  padding: 0
+  gap: 30px
+  width: 100%
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
 
 .gap
-	gap: 10px
+  gap: 10px
 
 .left
-	overflow-y: scroll
-	max-height: 40vh
+  overflow-y: scroll
+  max-height: 40vh
 
 .right
-	height: 40vh
+  height: 40vh
 
 .h100
-	height: 100%
+  height: 100%
 
 .nuclids__top
-	width: 100%
-	display: flex
-	justify-content: space-between
+  width: 100%
+  display: flex
+  justify-content: space-between
 
-	&-left
-		display: flex
-		flex-direction: column
-		justify-content: space-between
+  &-left
+    display: flex
+    flex-direction: column
+    justify-content: space-between
 
 .nuclids__bottom
-	width: 100%
-	display: flex
-	justify-content: space-between
+  width: 100%
+  display: flex
+  justify-content: space-between
 </style>

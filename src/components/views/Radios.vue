@@ -1,11 +1,12 @@
 <template>
-  <v-container>
+  <v-container :class="wrap ? 'd-flex' : ''">
     {{ codRAO[idx].description }}
     <v-radio-group
       v-model="codRAO[idx].value"
       :row="row"
       :column="!row"
-      class="calc__items"
+      class="calc__items pt-4"
+      :class="wrap ? 'ml-5' : ''"
       @change="changeValue"
     >
       <v-radio
@@ -21,14 +22,14 @@
 
 <script>
 export default {
-  props: ["codRAO", "idx", "row"],
+  props: ["codRAO", "idx", "row", "wrap", "changeValue"],
   data() {
     return {};
   },
   methods: {
-    changeValue() {
-      if (this.idx === 0) this.codRAO[8].value = "**";
-    },
+    // changeValue() {
+    //   if (this.idx === 0) this.codRAO[8].value = "**";
+    // },
   },
 };
 </script>
