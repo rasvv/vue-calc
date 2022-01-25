@@ -131,9 +131,15 @@
 	{
 		"Name_RN":"германий-71","Name_RN_Lat":"Ge-71","UdA_TRO":10000,"UdA_GRO":1140,"Vid_izluch":"гамма","Kod_gruppy":"б","Period_p_r":11.8,"Edinica_izmer_p_r":"сут","Num_TM":32,"ObA_GaRO":6100,"MOI":10000,"D_val":1000,"favorite":0
 	},
-	{"Name_RN":"мышьяк-73","Name_RN_Lat":"As-73","UdA_TRO":1000,"UdA_GRO":53,"Vid_izluch":"гамма","Kod_gruppy":"б","Period_p_r":80.3,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":110,"MOI":1000,"D_val":40,"favorite":0},
-	{"Name_RN":"мышьяк-74","Name_RN_Lat":"As-74","UdA_TRO":10,"UdA_GRO":"NULL","Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":17.8,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":53,"MOI":10,"D_val":0.09,"favorite":0},
-	{"Name_RN":"мышьяк-76","Name_RN_Lat":"As-76","UdA_TRO":100,"UdA_GRO":8.6,"Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":1.1,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":110,"MOI":10,"D_val":0.2,"favorite":0},
+	{
+		"Name_RN":"мышьяк-73","Name_RN_Lat":"As-73","UdA_TRO":1000,"UdA_GRO":53,"Vid_izluch":"гамма","Kod_gruppy":"б","Period_p_r":80.3,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":110,"MOI":1000,"D_val":40,"favorite":0
+	},
+	{
+		"Name_RN":"мышьяк-74","Name_RN_Lat":"As-74","UdA_TRO":10,"UdA_GRO":"NULL","Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":17.8,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":53,"MOI":10,"D_val":0.09,"favorite":0
+	},
+	{
+		"Name_RN":"мышьяк-76","Name_RN_Lat":"As-76","UdA_TRO":100,"UdA_GRO":8.6,"Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":1.1,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":110,"MOI":10,"D_val":0.2,"favorite":0
+	},
 	{"Name_RN":"мышьяк-77","Name_RN_Lat":"As-77","UdA_TRO":1000,"UdA_GRO":34,"Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":1.62,"Edinica_izmer_p_r":"сут","Num_TM":33,"ObA_GaRO":270,"MOI":1000,"D_val":8,"favorite":0},
 	{"Name_RN":"селен-75","Name_RN_Lat":"Se-75","UdA_TRO":100,"UdA_GRO":5.3,"Vid_izluch":"гамма","Kod_gruppy":"б","Period_p_r":120,"Edinica_izmer_p_r":"сут","Num_TM":34,"ObA_GaRO":77,"MOI":1,"D_val":0.2,"favorite":0},
 	{"Name_RN":"бром-82","Name_RN_Lat":"Br-82","UdA_TRO":10,"UdA_GRO":"NULL","Vid_izluch":"бета","Kod_gruppy":"б","Period_p_r":1.47,"Edinica_izmer_p_r":"сут","Num_TM":35,"ObA_GaRO":170,"MOI":1,"D_val":0.03,"favorite":0},

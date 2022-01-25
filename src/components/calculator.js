@@ -1,6 +1,7 @@
 import Radios from "./views/Radios.vue";
 import RadioNuclids from "./views/RadioNuclids.vue";
 import Tooltip from "./views/TooltipT.vue";
+import Kod from "./views/Kod.vue";
 
 export default {
   data() {
@@ -17,22 +18,22 @@ export default {
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
+      showNuclidsTable: false,
+      listHeight: 60+'vh',
       // longlife: false,
       codRAO: [],
       kod: true,
       ozri: 2,
-      headers: [
-        { text: "Радионуклид", value: "Name_RN" },
-        { text: "Период полураспада", value: "Period" },
-        { text: "Удельная активность", value: "UdA" },
-        { text: "Вид", value: "Vid_izluch" },
-        { text: "Трансурановый", value: "Trans" },
-        { text: "ПЗУА", value: "UdA_TRO" },
-        { text: "Период ПО", value: "Potential" },
-      ],
       selectedTypes: [],
       desc: "",
       rules: [(value) => !!value || "Required."],
+      leftPanel: {
+        height: '40vh',
+        'overflow-y': 'scroll'
+      },
+      rightPanel: {
+        height: '60vh'
+      },
     };
   },
   components: {
@@ -40,15 +41,10 @@ export default {
     Radios,
     RadioNuclids,
     Tooltip,
+    Kod,
   },
   methods: {
     addNuclid() {
-      this.selected.Trans = this.isTrans(this.selected.Num_TM);
-      this.selected.Period = `${this.selected.Period_p_r} ${this.selected.Edinica_izmer_p_r}`;
-      this.selected.UdA = 0;
-      this.selected.Sostav = this.checkSostav(this.selected);
-      this.selected.Udamza = this.selected.UdA / +this.selected.MOI;
-      this.selected.Potential = 0;
       this.selectedNuclids.push(this.selected);
       this.isdisb();
     },
@@ -58,6 +54,14 @@ export default {
         1
       );
       this.isdisb();
+    },
+    addNuclidFields(selected, pot) {
+      selected.Trans = this.isTrans(selected.Num_TM);
+      selected.Period = `${selected.Period_p_r} ${selected.Edinica_izmer_p_r}`;
+      selected.UdA = `${selected.UdA} Бк/г`;
+      selected.Sostav = this.checkSostav(selected);
+      selected.Udamza = selected.UdA / +selected.MOI;
+      selected.Potential = `${pot} лет`;
     },
     setSelected() {
       // this.selected = this.nuclids[i]
@@ -258,21 +262,34 @@ export default {
       selected.Potential = pot;
       return pot;
     },
+    setPotential(pot) {
+      console.log("pot = " + pot);
+      if (pot > 0) {
+        if (this.codRAO[5].value < 1) this.codRAO[5].value = 1;
+      }
+      if (pot > 100) {
+        if (this.codRAO[5].value < 2) this.codRAO[5].value = 2;
+      }
+      if (pot > 500) {
+        if (this.codRAO[5].value < 3) this.codRAO[5].value = 3;
+      }
+      console.log("this.codRAO[5].value = " + this.codRAO[5].value);
+    },
     calcCodRAO() {
       let longlife = false;
       this.codRAO[5].value = 0;
       let sostav = ["0", "0", "0"]; //[бета, альфа, трансурановые]
-      this.selectedNuclids.forEach((elem) => {
+      this.selectedNuclids.forEach((elem, i) => {
         if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31)
           longlife = true;
 
         switch (elem.Sostav) {
-          case 0:
+          case 0 || 1:
             sostav[0] = "1";
             break;
-          case 1:
-            sostav[0] = "1";
-            break;
+          // case 1:
+          //   sostav[0] = "1";
+          //   break;
           case 2:
             sostav[1] = "1";
             break;
@@ -286,25 +303,10 @@ export default {
         elem.Udamza = elem.UdA / +elem.MOI;
         console.log("Udamza = " + elem.Udamza);
         let pot = this.calcPotential(elem);
-        console.log("pot = " + pot);
-        if (pot > 0) {
-          if (this.codRAO[5].value < 1) this.codRAO[5].value = 1;
-        }
-        if (pot > 100) {
-          if (this.codRAO[5].value < 2) this.codRAO[5].value = 2;
-        }
-        if (pot > 500) {
-          if (this.codRAO[5].value < 3) this.codRAO[5].value = 3;
-        }
-        console.log("this.codRAO[5].value = " + this.codRAO[5].value);
+        this.setPotential(pot)
+        this.addNuclidFields(elem, pot)
+        this.selectedNuclids.splice(i, 1, this.selectedNuclids[i]);        
       });
-      console.log(this.selectedNuclids);
-      // this.selectedNuclids.splice(
-      //   0,
-      //   this.selectedNuclids.length,
-      //   this.selectedNuclids
-      // );
-      console.log(this.selectedNuclids);
 
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
       console.log(sostav);
@@ -322,8 +324,12 @@ export default {
         this.codRAO[2].value = 6;
       if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1")
         this.codRAO[2].value = 1;
+      this.kateg_RAO()
+      console.log("this.codRAO[2].value =" + this.codRAO[2].value);
+      console.log(this.codRAO);
 
-      this.kateg_RAO();
+      this.showNuclidsTable = true
+      this.rightPanel.height = '40vh'
     },
   },
   created() {

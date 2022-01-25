@@ -1,37 +1,7 @@
 <template>
   <v-container class="calc" fluid>
     <v-row class="calc__form bordered">
-      <v-col cols="6" class="calc__selectnuclids">
-        <v-row class="">
-          <v-col cols="6" class="calc__types d-flex align-stretch">
-            <v-container class="bordered">
-              Код РАО
-              <h1 class="my-6">
-                <Tooltip
-                  v-for="i in 11"
-                  :key="i"
-                  :codRAO="codRAO"
-                  :idx="i - 1"
-                />
-              </h1>
-            </v-container>
-          </v-col>
-          <v-col cols="6" class="calc__types d-flex align-stretch">
-            <v-container class="bordered">
-              <v-btn :disabled="!enabledBTN" width="100%" @click="calcCodRAO">
-                Расчитать
-              </v-btn>
-
-              <v-btn :disabled="true" width="100%" @click="showKod = true">
-                Скопировать код
-              </v-btn>
-              <v-btn :disabled="true" width="100%" @click="setShowKod">
-                Новый расчет
-              </v-btn>
-            </v-container>
-          </v-col>
-        </v-row>
-
+      <v-col cols="5" class="calc__selectnuclids">
         <v-row class="calc__types">
           <!-- Агрегатное состояние -->
           <Radios
@@ -88,6 +58,7 @@
                 :items="filteredTypeRAO"
                 item-text="description"
                 item-value="cod"
+                auto-select-first="true"
                 dense
                 clearable
                 @change="parseSelected"
@@ -110,16 +81,18 @@
           />
         </v-row>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="7" class="mt-n2">
         <v-container class="bordered">
           <h2>Радионуклидный состав</h2>
-          <v-row class="pagetop" v-show="false">
-            <v-col cols="12" class="bordered">
+          <v-row class="nuclidstable" v-show="showNuclidsTable">
+            <!-- <v-col cols="12" class="bordered ma-2 mt-4"> -->
               <v-data-table
+                class="bordered ma-2 mt-4"
                 :headers="headers"
                 :items="selectedNuclids"
+                :hide-default-footer="selectedNuclids.length < 5"
               ></v-data-table>
-            </v-col>
+            <!-- </v-col> -->
           </v-row>
 
           <v-row width="100%">
@@ -190,7 +163,7 @@
               <v-col cols="5">
                 <div>
                   <v-list max-height="50vh" dense>
-                    <v-list-item-group class="left bordered">
+                    <v-list-item-group class="bordered" :style="leftPanel">
                       <v-list-item
                         v-for="(item, i) in filteredNuclids"
                         :key="i"
@@ -198,13 +171,20 @@
                         @dblclick="addNuclid"
                       >
                         <!-- {{ i + 1 }} -->
-                        {{ item.Name_RN }}
+                        <!-- `${ item.Name_RN } ${ (Name_RN_Lat) }` -->
+                        {{ item.Name_RN }}  ( {{ item.Name_RN_Lat }} )
                       </v-list-item>
                     </v-list-item-group>
                   </v-list>
                 </div>
+                <v-row class="bordered" v-show="!showNuclidsTable">
+                  <RadioNuclids
+                    :codRAO="codRAO"
+                    :selected="selected"
+                    :trans="isTrans(selected.Num_TM)"
+                  />
+                </v-row>                
               </v-col>
-
               <v-col cols="1" class="buttons">
                 <v-btn @click="addNuclid">
                   <v-icon class="mx-0 mb-0">mdi-plus</v-icon>
@@ -216,7 +196,7 @@
 
               <v-col cols="6">
                 <v-list class="calc__nuclids">
-                  <v-list-item-group class="right bordered">
+                  <v-list-item-group class="bordered" :style="rightPanel">
                     <v-list-item
                       v-for="(item, i) in selectedNuclids"
                       :key="i"
@@ -243,17 +223,76 @@
               </v-col>
             </div>
           </v-row>
-
-          <v-row class="bordered">
-            <RadioNuclids
-              :codRAO="codRAO"
-              :selected="selected"
-              :trans="isTrans(selected.Num_TM)"
-            />
-          </v-row>
         </v-container>
+
       </v-col>
     </v-row>
+    <v-row class="">
+      <v-col cols="6" class="calc__types d-flex align-stretch">
+        <!-- <v-container class="bordered">
+          Код РАО
+          <h1 class="my-6">
+            <Tooltip
+              v-for="i in 11"
+              :key="i"
+              :codRAO="codRAO"
+              :idx="i - 1"
+            />
+          </h1>
+        </v-container> -->
+      </v-col>
+      <v-col cols="6" class="calc__types d-flex align-stretch">
+        <v-container class="bordered">
+          <v-dialog
+            transition="dialog-bottom-transition"
+            max-width="100%"
+            class="h100"
+          >
+            <template v-slot:activator="{ on, attrs }" class="h100">
+              <v-btn 
+                v-bind="attrs"
+                v-on="on"
+                :disabled="!enabledBTN" 
+                width="100%" 
+                @click="calcCodRAO">
+                Расчитать
+              </v-btn>                  
+            </template>
+            <template v-slot:default="dialog" class="h100">
+              <!-- <v-card>
+                <v-toolbar
+                  color="primary"
+                  dark
+                >Opening from the bottom</v-toolbar>
+                <v-card-text>
+                  <div class="text-h2 pa-12">Hello world!</div>
+                </v-card-text>
+                <v-card-actions class="justify-end">
+                  <v-btn
+                    text
+                    @click="dialog.value = false"
+                  >Close</v-btn>
+                </v-card-actions>
+              </v-card> -->
+              <Kod
+                :codRAO="codRAO"
+                :kodRAO="kodRAO"
+                :selectedNuclids="selectedNuclids"
+                @click="dialog.value = false"
+              />              
+            </template>
+          </v-dialog>              
+
+
+          <!-- <v-btn :disabled="true" width="100%" @click="showKod = true">
+            Скопировать код
+          </v-btn>
+          <v-btn :disabled="true" width="100%" @click="setShowKod">
+            Новый расчет
+          </v-btn> -->
+        </v-container>
+      </v-col>
+    </v-row>              
   </v-container>
 </template>
 
@@ -325,13 +364,13 @@ html
 
 .left
   overflow-y: scroll
-  max-height: 40vh
-
-.right
   height: 40vh
 
+.right
+  height: listHeight
+
 .h100
-  height: 100%
+  height: 100vh
 
 .nuclids__top
   width: 100%
@@ -347,4 +386,5 @@ html
   width: 100%
   display: flex
   justify-content: space-between
+
 </style>

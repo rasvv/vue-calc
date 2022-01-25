@@ -1,5 +1,5 @@
 <template>
-  <v-container :class="wrap ? 'd-flex' : ''">
+  <v-container :class="wrap ? 'd-flex; justify-column' : ''">
     {{ codRAO[idx].description }}
     <v-radio-group
       v-model="codRAO[idx].value"
