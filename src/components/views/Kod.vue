@@ -7,7 +7,7 @@
           <h1 class="my-6">
             {{ kodRAO }}
           </h1>
-          <v-list max-height="50vh" dense>
+          <!-- <v-list max-height="50vh" dense>
             <v-list-item-group class="bordered" :style="leftPanel">
               <v-list-item
                 v-for="(item, i) in codRAO"
@@ -32,7 +32,15 @@
                 </v-card>
               </v-list-item>
             </v-list-item-group>
-          </v-list>          
+          </v-list>       -->
+          <v-row class="nuclidstable">
+            <v-data-table
+              class="bordered ma-2 mt-4"
+              :headers="codheaders"
+              :items="codRAO"
+              :hide-default-footer="true"
+            ></v-data-table>
+          </v-row>               
         </v-container>
       </v-col>
     </v-row>
@@ -55,7 +63,7 @@
           <v-btn width="100%" @click="copyToClipboard">
             Скопировать код
           </v-btn>
-          <v-btn width="100%" @click="setShowKod">
+          <v-btn width="100%" @click="closeDialog">
             Новый расчет
           </v-btn>
         </v-container>
@@ -77,7 +85,12 @@ export default {
         { text: "Трансурановый", value: "Trans" },
         { text: "ПЗУА", value: "UdA_TRO" },
         { text: "Период потенциальной опасности", value: "Potential" },
-      ],      
+      ],   
+      codheaders: [
+        { text: "№ символа", value: "description"},
+        { text: "Идентификатор", value: "value" },
+        { text: "Значение", value: "activeMenu(item-key)[0].text" },
+      ],         
     };
   },
   methods: {
@@ -96,7 +109,10 @@ export default {
       // } catch(e) {
       //   throw e
       // }
-    },    
+    },
+    closeDialog() {
+      this.$emit('closeDialog')
+    }
   },
   computed: {
     show_Kod() {

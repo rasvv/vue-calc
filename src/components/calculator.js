@@ -22,6 +22,7 @@ export default {
       listHeight: 60+'vh',
       // longlife: false,
       codRAO: [],
+      dialog: false,
       kod: true,
       ozri: 2,
       selectedTypes: [],
@@ -85,7 +86,7 @@ export default {
       let items = {};
       items.id = this.selectedTypes.cod;
       items.text = this.desc;
-      // this.codRAO[8].radios.splice(0, 5, items);
+      this.codRAO[8].radios.splice(0, 1, items);
       console.log(this.codRAO[8].radios);
     },
     setOZRI() {
@@ -132,11 +133,11 @@ export default {
 			console.log("--=== kateg_RAO ===--");
       this.codRAO[1].value = 0;
       this.selectedNuclids.forEach((elem) => {
-        console.log("elem.UdA = " + elem.UdA);
+        console.log("kateg_RAO() elem.Sostav = " + elem.Sostav);
         // elem.Udamza = elem.UdA / +elem.MOI
         if (this.codRAO[0].value === 1) {
           if (elem.Sostav === 0) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("1-0- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1 * 10e4) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
             } else if (elem.UdA >= 1 * 10e4 && elem.UdA < 1 * 10e8) {
@@ -175,10 +176,10 @@ export default {
         }
         if (this.codRAO[0].value === 2) {
           console.log("this.codRAO[1].value = " + this.codRAO[1].value);
-          console.log("elem.Sostav = " + elem.Sostav);
+          console.log("2-- elem.Sostav = " + elem.Sostav);
 
           if (elem.Sostav === 0) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-0- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e7) {
               if (this.codRAO[1].value < 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e7 && elem.UdA < 1e8) {
@@ -190,7 +191,7 @@ export default {
             }
           }
           if (elem.Sostav === 1) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-1- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e3) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e3 && elem.UdA < 1e4) {
@@ -206,7 +207,7 @@ export default {
             }
           }
           if (elem.Sostav === 2) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-2- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e2) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e2 && elem.UdA < 1e3) {
@@ -218,7 +219,7 @@ export default {
             }
           }
           if (elem.Sostav === 3) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-3- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 10) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 10 && elem.UdA < 1e2) {
@@ -240,6 +241,26 @@ export default {
       if (selected.Num_TM > 92) return 3; //трансурановые
       if (selected.Kod_gruppy === "б") return 1; //бета не трансурановые
       if (selected.Kod_gruppy === "а") return 2; //альфа не трансурановые
+    },
+    setSostav(sostav) {
+      console.log("sostav");
+      console.log(sostav);
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0")
+        this.codRAO[2].value = 4;
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0")
+        this.codRAO[2].value = 5;
+      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "1")
+        this.codRAO[2].value = 6;
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "0")
+        this.codRAO[2].value = 2;
+      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "1")
+        this.codRAO[2].value = 3;
+      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "1")
+        this.codRAO[2].value = 6;
+      if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1")
+        this.codRAO[2].value = 1;
+        console.log("this.codRAO[2].value =" + this.codRAO[2].value);        
+      return this.codRAO[2].value
     },
     isTrans(Num_TM) {
       return Num_TM > 92 ? "да" : "нет";
@@ -279,17 +300,21 @@ export default {
       let longlife = false;
       this.codRAO[5].value = 0;
       let sostav = ["0", "0", "0"]; //[бета, альфа, трансурановые]
+      console.log("calcCodRAO")
+      console.log("selectedNuclids length = " + this.selectedNuclids.length);
+      console.log("selectedNuclids: ")
+      console.log(this.selectedNuclids)
       this.selectedNuclids.forEach((elem, i) => {
         if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31)
           longlife = true;
 
         switch (elem.Sostav) {
-          case 0 || 1:
+          case 0:
             sostav[0] = "1";
             break;
-          // case 1:
-          //   sostav[0] = "1";
-          //   break;
+          case 1:
+            sostav[0] = "1";
+            break;
           case 2:
             sostav[1] = "1";
             break;
@@ -309,21 +334,7 @@ export default {
       });
 
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
-      console.log(sostav);
-      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0")
-        this.codRAO[2].value = 4;
-      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0")
-        this.codRAO[2].value = 5;
-      if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "1")
-        this.codRAO[2].value = 6;
-      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "0")
-        this.codRAO[2].value = 2;
-      if (sostav[0] === "0" && sostav[1] === "1" && sostav[2] === "1")
-        this.codRAO[2].value = 3;
-      if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "1")
-        this.codRAO[2].value = 6;
-      if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1")
-        this.codRAO[2].value = 1;
+      this.setSostav(sostav)
       this.kateg_RAO()
       console.log("this.codRAO[2].value =" + this.codRAO[2].value);
       console.log(this.codRAO);
@@ -331,6 +342,10 @@ export default {
       this.showNuclidsTable = true
       this.rightPanel.height = '40vh'
     },
+    closeDialog() {
+      console.log("closeDialog");
+      this.showNuclidsTable = false
+    }
   },
   created() {
     this.codRAO = require("@/db/codRAO.json");
@@ -354,7 +369,6 @@ export default {
     },
     filteredTypeRAO() {
       return this.typeRAO.filter((elem) => {
-        console.log("this.codRAO[0].value = " + this.codRAO[0].value);
         return this.codRAO[0].value === 2
           ? elem.section === 1 || elem.section === 2
           : elem.section === this.codRAO[0].value;

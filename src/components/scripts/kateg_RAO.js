@@ -7,7 +7,7 @@ export default {
         // elem.Udamza = elem.UdA / +elem.MOI
         if (this.codRAO[0].value === 1) {
           if (elem.Sostav === 0) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("1-0- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1 * 10e4) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
             } else if (elem.UdA >= 1 * 10e4 && elem.UdA < 1 * 10e8) {
@@ -49,7 +49,7 @@ export default {
           console.log("elem.Sostav = " + elem.Sostav);
 
           if (elem.Sostav === 0) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-0- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e7) {
               if (this.codRAO[1].value < 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e7 && elem.UdA < 1e8) {
@@ -61,7 +61,7 @@ export default {
             }
           }
           if (elem.Sostav === 1) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-1- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e3) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e3 && elem.UdA < 1e4) {
@@ -77,7 +77,7 @@ export default {
             }
           }
           if (elem.Sostav === 2) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-2- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 1e2) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 1e2 && elem.UdA < 1e3) {
@@ -89,7 +89,7 @@ export default {
             }
           }
           if (elem.Sostav === 3) {
-            console.log("elem.Sostav" + elem.Sostav);
+            console.log("2-3- elem.Sostav" + elem.Sostav);
             if (elem.UdA < 10) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
             } else if (elem.UdA >= 10 && elem.UdA < 1e2) {
