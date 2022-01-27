@@ -161,7 +161,7 @@
                       >
                         <!-- {{ i + 1 }} -->
                         <!-- `${ item.Name_RN } ${ (Name_RN_Lat) }` -->
-                        {{ item.Name_RN }}  ( {{ item.Name_RN_Lat }} )
+                        {{ item.Name_RN }} ( {{ item.Name_RN_Lat }} )
                       </v-list-item>
                     </v-list-item-group>
                   </v-list>
@@ -172,7 +172,7 @@
                     :selected="selected"
                     :trans="isTrans(selected.Num_TM)"
                   />
-                </v-row>                
+                </v-row>
               </v-col>
               <v-col cols="1" class="buttons">
                 <v-btn @click="addNuclid">
@@ -196,6 +196,7 @@
                         {{ item.Name_RN }}
                         <v-text-field
                           label="Удельная активность (Бк/г)"
+                          v-show="showUda === 0"
                           v-model="item.UdA"
                           type="number"
                           @change="isdisb()"
@@ -203,8 +204,27 @@
                           hide-details="auto"
                           suffix="Бк/г"
                         ></v-text-field>
+                        <v-text-field
+                          label="Процентов"
+                          v-show="showUda === 1"
+                          v-model="item.UdA"
+                          type="number"
+                          @change="isdisb()"
+                          :rules="rules"
+                          hide-details="auto"
+                          suffix="%"
+                        ></v-text-field>
+                        <v-text-field
+                          label="Масса (кг)"
+                          v-show="showUda === 2"
+                          v-model="item.UdA"
+                          type="number"
+                          @change="isdisb()"
+                          :rules="rules"
+                          hide-details="auto"
+                          suffix="кг"
+                        ></v-text-field>
                       </div>
-
                       <!-- {{ item.Name_RN }} -->
                     </v-list-item>
                   </v-list-item-group>
@@ -213,37 +233,32 @@
             </div>
           </v-row>
         </v-container>
-
       </v-col>
-      <div class="dialog--fullscreen">
+      <div>
         <v-dialog
           v-model="showNuclidsTable"
+          persistent
           transition="dialog-bottom-transition"
-          max-width="100vw"
-          fullscreen
-          background="lightgray"
-          class="h100 backgr"
+          width="65vw"
         >
-          <template v-slot:activator="{ on, attrs }" class="h100 d-flex justify-cetner align-center">
-            <v-btn 
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
               v-bind="attrs"
               v-on="on"
-              :disabled="!enabledBTN" 
+              :disabled="!enabledBTN"
               width="150%"
-              class="d-flex justify-cetner align-center"
-              @click="calcCodRAO">
+              @click="calcCodRAO"
+            >
               Расчитать
-            </v-btn>                  
+            </v-btn>
           </template>
-          <template v-slot:default="closeDialog">
-            <Kod
-              :codRAO="codRAO"
-              :kodRAO="kodRAO"
-              :selectedNuclids="selectedNuclids"
-              @closeDialog="closeDialog"
-            />              
-          </template>
-        </v-dialog>              
+          <Kod
+            :codRAO="codRAO"
+            :kodRAO="kodRAO"
+            :selectedNuclids="selectedNuclids"
+            v-on:close-dialog="closeDialog"
+          />
+        </v-dialog>
       </div>
     </v-row>
   </v-container>
@@ -264,7 +279,6 @@ html
     height: 95vh
     display: flex
     justify-content: center
-
 
   &__types
     padding: 5px
@@ -342,13 +356,4 @@ html
   width: 100%
   display: flex
   justify-content: space-between
-
-.v-dialog__content
-  background-color: #ccc !important
-
-.dialog--fullscreen
-  position: relative !important
-  display: flex
-  justify-content: center
-  align-items: center
 </style>

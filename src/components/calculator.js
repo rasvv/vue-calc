@@ -12,8 +12,8 @@ export default {
       nuclids: [],
       favoriteNuclids: 1,
       showUda: 0,
-			sumAct: 0,
-			obUdAct: 0,
+      sumAct: 0,
+      obUdAct: 0,
       typeRAO: [],
       selected: {},
       selectedMin: {},
@@ -35,6 +35,15 @@ export default {
       rightPanel: {
         height: '60vh'
       },
+      headers: [
+        { text: "Радионуклид", value: "Name_RN" },
+        { text: "Период полураспада", value: "Period" },
+        { text: "Удельная активность", value: "UdA" },
+        { text: "Вид излучения", value: "Vid_izluch" },
+        { text: "Трансурановый", value: "Trans" },
+        { text: "ПЗУА", value: "UdA_TRO" },
+        { text: "Период потенциальной опасности", value: "Potential" },
+      ],			
     };
   },
   components: {
@@ -45,6 +54,22 @@ export default {
     Kod,
   },
   methods: {
+    copyToClipboard() {
+      // try {
+      navigator.clipboard.writeText(this.kodRAO);
+      // } catch(e) {
+      //   throw e
+      // }
+    },
+    activeMenu(idx) {
+      if (idx === 8) {
+        console.log(this.codRAO[8].radios);
+        return this.codRAO[8].radios;
+      } else
+        return this.codRAO[idx].radios.filter((elem) => {
+          return elem.id === this.codRAO[idx].value;
+        });
+    },		
     addNuclid() {
       this.selectedNuclids.push(this.selected);
       this.isdisb();
@@ -57,18 +82,19 @@ export default {
       this.isdisb();
     },
     addNuclidFields(selected, pot) {
+      console.log("--=== addNuclidFields ===--");
       selected.Trans = this.isTrans(selected.Num_TM);
       selected.Period = `${selected.Period_p_r} ${selected.Edinica_izmer_p_r}`;
       selected.UdA = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
       selected.Udamza = selected.UdA / +selected.MOI;
       selected.Potential = `${pot} лет`;
+      console.log("++=== addNuclidFields ===++");
     },
     setSelected() {
       // this.selected = this.nuclids[i]
     },
     isdisb() {
-      console.log("isdisb");
       let per = false;
       if (this.selectedNuclids.length === 0) return false;
       console.log(this.selectedNuclids);
@@ -80,6 +106,7 @@ export default {
       this.validNuclids = this.isdisabled;
     },
     parseSelected() {
+      console.log("--=== parseSelected ===--");
       console.log(this.selectedTypes);
       this.desc = this.selectedTypes.description;
       this.codRAO[8].value = this.selectedTypes.cod;
@@ -88,18 +115,25 @@ export default {
       items.text = this.desc;
       this.codRAO[8].radios.splice(0, 1, items);
       console.log(this.codRAO[8].radios);
+      console.log("++=== parseSelected ===++");
     },
     setOZRI() {
+      console.log("--=== setOZRI ===--");
       if (this.ozri === 1) {
         this.codRAO[1].value = 4;
       }
+      console.log("++=== setOZRI ===++");
     },
     setShowKod() {
+      console.log("--=== setShowKod ===--");
       this.$emit((this.showKod = false));
       console.log(this.showKod);
+      console.log("++=== setShowKod ===++");
     },
     changeValue() {
+      console.log("--=== changeValue ===--");
       if (this.idx === 0) this.codRAO[8].value = "**";
+      console.log("++=== changeValue ===++");
     },		
     per_pr_min(perVal, per) {
       switch (per) {
@@ -130,7 +164,7 @@ export default {
       }
     },
     kateg_RAO() {
-			console.log("--=== kateg_RAO ===--");
+      console.log("--=== kateg_RAO ===--");
       this.codRAO[1].value = 0;
       this.selectedNuclids.forEach((elem) => {
         console.log("kateg_RAO() elem.Sostav = " + elem.Sostav);
@@ -235,6 +269,7 @@ export default {
           this.codRAO[1].value = 9;
         }
       });
+      console.log("++=== kateg_RAO ===++");
     },
     checkSostav(selected) {
       if (selected.Name_RN === "тритий") return 0; //тритий
@@ -243,7 +278,7 @@ export default {
       if (selected.Kod_gruppy === "а") return 2; //альфа не трансурановые
     },
     setSostav(sostav) {
-      console.log("sostav");
+      console.log("--=== setSostav ===--");
       console.log(sostav);
       if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0")
         this.codRAO[2].value = 4;
@@ -260,6 +295,7 @@ export default {
       if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1")
         this.codRAO[2].value = 1;
         console.log("this.codRAO[2].value =" + this.codRAO[2].value);        
+      console.log("++=== setSostav ===++");
       return this.codRAO[2].value
     },
     isTrans(Num_TM) {
@@ -268,7 +304,7 @@ export default {
     calcPotential(selected) {
       let udal = selected.MOI;
       console.log("--=== calcPotential ===--");
-      console.log(selected.UdA_TRO);
+      // console.log(selected.UdA_TRO);
 
       if (this.codRAO[0].value === 1) {
         udal = udal * selected.UdA_GRO;
@@ -281,9 +317,11 @@ export default {
       let pot = (1.44 * Math.log(selected.UdA / udal) * per).toFixed(2);
       console.log(selected.Name_RN + " = " + pot);
       selected.Potential = pot;
+      console.log("++=== calcPotential ===++");
       return pot;
     },
     setPotential(pot) {
+      console.log("--=== setPotential ===--");
       console.log("pot = " + pot);
       if (pot > 0) {
         if (this.codRAO[5].value < 1) this.codRAO[5].value = 1;
@@ -295,38 +333,46 @@ export default {
         if (this.codRAO[5].value < 3) this.codRAO[5].value = 3;
       }
       console.log("this.codRAO[5].value = " + this.codRAO[5].value);
+      console.log("++=== setPotential ===++");
     },
     calcCodRAO() {
+      console.log("--=== calcCodRAO ===--");
       let longlife = false;
       this.codRAO[5].value = 0;
       let sostav = ["0", "0", "0"]; //[бета, альфа, трансурановые]
-      console.log("calcCodRAO")
-      console.log("selectedNuclids length = " + this.selectedNuclids.length);
-      console.log("selectedNuclids: ")
+      console.log("1. selectedNuclids length = " + this.selectedNuclids.length);
+      console.log("2. selectedNuclids: ")
       console.log(this.selectedNuclids)
       this.selectedNuclids.forEach((elem, i) => {
         if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31)
           longlife = true;
 
-        switch (elem.Sostav) {
+        console.log("elem.Sostav = " + i);
+        console.log(this.checkSostav(elem));
+
+        switch (this.checkSostav(elem)) {
           case 0:
             sostav[0] = "1";
+            console.log("Sostav[0] = 1");
             break;
           case 1:
             sostav[0] = "1";
+            console.log("Sostav[0] = 1");
             break;
           case 2:
             sostav[1] = "1";
+            console.log("Sostav[1] = 1");
             break;
           case 3:
             sostav[2] = "1";
+            console.log("Sostav[2] = 1");
             break;
         }
-        console.log("UdA = " + elem.UdA);
-        console.log("MOI = " + elem.MOI);
-        console.log("Udamza = " + elem.Udamza);
+        // console.log("UdA = " + elem.UdA);
+        // console.log("MOI = " + elem.MOI);
+        // console.log("Udamza = " + elem.Udamza);
         elem.Udamza = elem.UdA / +elem.MOI;
-        console.log("Udamza = " + elem.Udamza);
+        // console.log("Udamza = " + elem.Udamza);
         let pot = this.calcPotential(elem);
         this.setPotential(pot)
         this.addNuclidFields(elem, pot)
@@ -336,15 +382,29 @@ export default {
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
       this.setSostav(sostav)
       this.kateg_RAO()
-      console.log("this.codRAO[2].value =" + this.codRAO[2].value);
+      console.log("4. this.codRAO[2].value =" + this.codRAO[2].value);
       console.log(this.codRAO);
 
       this.showNuclidsTable = true
       this.rightPanel.height = '40vh'
+      console.log("++=== calcCodRAO ===++");
+    },
+    reloadVar() {
+      console.log("--=== reloadVar ===--");
+      this.selectedNuclids = []
+      this.selected = {}
+      this.codRAO = require("@/db/codRAO.json");
+      this.validNuclids = false
+      this.codRAO[8].value = "**"
+      this.selectedTypes = []
+      this.desc=""
+      console.log("++=== reloadVar ===++");
     },
     closeDialog() {
-      console.log("closeDialog");
+      console.log("--=== closeDialog ===--");
       this.showNuclidsTable = false
+      this.reloadVar()
+      console.log("++=== closeDialog ===++");
     }
   },
   created() {
