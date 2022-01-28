@@ -132,20 +132,44 @@
                 </v-radio-group>
                 <v-text-field
                   v-show="showUda === 1"
-                  label="Суммарная активность"
-                  type="number"
-                  hide-details="auto"
-                  clearable
-                  v-model="sumAct"
-                ></v-text-field>
-                <v-text-field
-                  v-show="showUda === 2"
                   label="Удельная активность"
                   type="number"
                   hide-details="auto"
                   clearable
                   v-model="obUdAct"
+                  suffix="Бк/г"
                 ></v-text-field>
+                <v-row v-show="showUda === 2">
+                  <v-col cols="5">
+                    <v-text-field
+                      label="Суммарная активность"
+                      v-model="sumAct"
+                      type="number"
+                      hide-details="auto"
+                      clearable
+                      :rules="[rules.required]"
+                      suffix="Бк"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Масса"
+                      type="number"
+                      hide-details="auto"
+                      clearable
+                      v-model="mass"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-select
+                      :items="massItems"
+                      v-model="selectedMass"
+                      item-text="text"
+                      item-value="value"
+                      label="Ед. измер."
+                    ></v-select>
+                  </v-col>
+                </v-row>
               </v-col>
             </div>
             <div class="nuclids__bottom">
@@ -200,21 +224,38 @@
                           v-model="item.UdA"
                           type="number"
                           @change="isdisb()"
-                          :rules="rules"
+                          :rules="[rules.required]"
                           hide-details="auto"
                           suffix="Бк/г"
                         ></v-text-field>
-                        <v-text-field
-                          label="Процентов"
-                          v-show="showUda === 1"
-                          v-model="item.UdA"
-                          type="number"
-                          @change="isdisb()"
-                          :rules="rules"
-                          hide-details="auto"
-                          suffix="%"
-                        ></v-text-field>
-                        <v-text-field
+                        <v-row v-show="showUda != 0">
+                          <v-col cols="5">
+                            <v-text-field
+                              label="Процентов"
+                              v-model="item.Percent"
+                              type="number"
+                              @change="
+                                recalcUdA(item);
+                                isdisb();
+                              "
+                              :rules="[rules.required, rules.percent]"
+                              hide-details="auto"
+                              suffix="%"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="7">
+                            <v-text-field
+                              label="Удельная активность (Бк/г)"
+                              :readonly="true"
+                              v-model="item.UdA"
+                              type="number"
+                              hide-details="auto"
+                              suffix="Бк/г"
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+
+                        <!-- <v-text-field
                           label="Масса (кг)"
                           v-show="showUda === 2"
                           v-model="item.UdA"
@@ -223,7 +264,7 @@
                           :rules="rules"
                           hide-details="auto"
                           suffix="кг"
-                        ></v-text-field>
+                        ></v-text-field> -->
                       </div>
                       <!-- {{ item.Name_RN }} -->
                     </v-list-item>

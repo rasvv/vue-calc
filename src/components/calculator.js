@@ -14,6 +14,7 @@ export default {
       showUda: 0,
       sumAct: 0,
       obUdAct: 0,
+      mass: 0,
       typeRAO: [],
       selected: {},
       selectedMin: {},
@@ -27,7 +28,10 @@ export default {
       ozri: 2,
       selectedTypes: [],
       desc: "",
-      rules: [(value) => !!value || "Required."],
+      rules: {
+        required: value => !!value || 'Required.',
+        percent: value => value <= 100 || 'Не более 100%',
+      },      
       leftPanel: {
         height: '40vh',
         'overflow-y': 'scroll'
@@ -43,7 +47,13 @@ export default {
         { text: "Трансурановый", value: "Trans" },
         { text: "ПЗУА", value: "UdA_TRO" },
         { text: "Период потенциальной опасности", value: "Potential" },
-      ],			
+      ],
+      massItems: [
+        { text: "г", value: 1 },
+        { text: "кг", value: 1000 },
+        { text: "т", value: 1000000 },
+      ],
+      selectedMass: 1,
     };
   },
   components: {
@@ -71,6 +81,7 @@ export default {
         });
     },		
     addNuclid() {
+
       this.selectedNuclids.push(this.selected);
       this.isdisb();
     },
@@ -85,7 +96,8 @@ export default {
       console.log("--=== addNuclidFields ===--");
       selected.Trans = this.isTrans(selected.Num_TM);
       selected.Period = `${selected.Period_p_r} ${selected.Edinica_izmer_p_r}`;
-      selected.UdA = `${selected.UdA} Бк/г`;
+      // selected.UdA = `${selected.UdA} Бк/г`;
+      selected.UdAUnit = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
       selected.Udamza = selected.UdA / +selected.MOI;
       selected.Potential = `${pot} лет`;
@@ -104,6 +116,18 @@ export default {
       });
       per ? (this.isdisabled = false) : (this.isdisabled = true);
       this.validNuclids = this.isdisabled;
+    },
+    recalcUdA(elem) {
+      console.log("--=== recalcUdA ===--");
+      console.log(elem)
+      console.log("this.sumAct = " + this.sumAct)
+      console.log("this.mass = " + this.mass)
+      console.log("this.selectedMass = " + this.selectedMass)
+
+      elem.UdA = ((+this.sumAct / (+this.mass * +this.selectedMass)) * elem.Percent / 100).toFixed(2)
+      console.log("elem.UdA = " + elem.UdA)
+
+      console.log("++=== recalcUdA ===++");
     },
     parseSelected() {
       console.log("--=== parseSelected ===--");
@@ -166,44 +190,58 @@ export default {
     kateg_RAO() {
       console.log("--=== kateg_RAO ===--");
       this.codRAO[1].value = 0;
+      // let UdAsSumTri = this.UdAsSumTri
+      // let UdAsSumBet = this.UdAsSumBet
+      // let UdAsSumAlp = this.UdAsSumAlp
+      // let UdAsSumTra = this.UdAsSumTra
+
+      let UdAsSumTri = 0
+      let UdAsSumBet = 0
+      let UdAsSumAlp = 0
+      let UdAsSumTra = 0
+
       this.selectedNuclids.forEach((elem) => {
         console.log("kateg_RAO() elem.Sostav = " + elem.Sostav);
         // elem.Udamza = elem.UdA / +elem.MOI
         if (this.codRAO[0].value === 1) {
-          if (elem.Sostav === 0) {
+          if (elem.Sostav === "тритий") {
             console.log("1-0- elem.Sostav" + elem.Sostav);
-            if (elem.UdA < 1 * 10e4) {
+            UdAsSumTri += +elem.UdA
+            if (UdAsSumTri< 1 * 10e4) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1 * 10e4 && elem.UdA < 1 * 10e8) {
+            } else if (UdAsSumTri >= 1 * 10e4 && UdAsSumTri < 1 * 10e8) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1 * 10e8) {
+            } else if (UdAsSumTri >= 1 * 10e8) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 1) {
-            if (elem.UdA < 1 * 10e3) {
+          if (elem.Sostav === "бета") {
+            UdAsSumBet += +elem.UdA
+            if (UdAsSumBet < 1 * 10e3) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1 * 10e3 && elem.UdA < 1 * 10e7) {
+            } else if (UdAsSumBet >= 1 * 10e3 && UdAsSumBet < 1 * 10e7) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1 * 10e7) {
+            } else if (UdAsSumBet >= 1 * 10e7) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 2) {
-            if (elem.UdA < 1 * 10e2) {
+          if (elem.Sostav === "альфа") {
+            UdAsSumAlp += +elem.UdA
+            if (UdAsSumAlp < 1 * 10e2) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1 * 10e2 && elem.UdA < 1 * 10e6) {
+            } else if (UdAsSumAlp >= 1 * 10e2 && UdAsSumAlp < 1 * 10e6) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1 * 10e6) {
+            } else if (UdAsSumAlp >= 1 * 10e6) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 3) {
-            if (elem.UdA < 10) {
+          if (elem.Sostav === "трансурановые") {
+            UdAsSumTra += +elem.UdA
+            if (UdAsSumTra < 10) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 10 && elem.UdA < 1 * 10e5) {
+            } else if (UdAsSumTra >= 10 && UdAsSumTra < 1 * 10e5) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1 * 10e5) {
+            } else if (UdAsSumTra >= 1 * 10e5) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
@@ -212,55 +250,55 @@ export default {
           console.log("this.codRAO[1].value = " + this.codRAO[1].value);
           console.log("2-- elem.Sostav = " + elem.Sostav);
 
-          if (elem.Sostav === 0) {
+          if (elem.Sostav === "тритий") {
+            UdAsSumTri += +elem.UdA
             console.log("2-0- elem.Sostav" + elem.Sostav);
-            if (elem.UdA < 1e7) {
+            if (UdAsSumTri < 1e7) {
               if (this.codRAO[1].value < 0) this.codRAO[1].value = 0;
-            } else if (elem.UdA >= 1e7 && elem.UdA < 1e8) {
+            } else if (UdAsSumTri >= 1e7 && UdAsSumTri < 1e8) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1e8 && elem.UdA < 1e11) {
+            } else if (UdAsSumTri >= 1e8 && UdAsSumTri < 1e11) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1e11) {
+            } else if (UdAsSumTri >= 1e11) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 1) {
+          if (elem.Sostav === "бета") {
+            UdAsSumBet += +elem.UdA
             console.log("2-1- elem.Sostav" + elem.Sostav);
-            if (elem.UdA < 1e3) {
+            if (UdAsSumBet < 1e3) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-            } else if (elem.UdA >= 1e3 && elem.UdA < 1e4) {
+            } else if (UdAsSumBet >= 1e3 && UdAsSumBet < 1e4) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1e4 && elem.UdA < 1e7) {
-              console.log(
-                "elem.UdA >= 1*10e4 && elem.UdA < 1*10e7 " +
-                  this.codRAO[1].value
-              );
+            } else if (UdAsSumBet >= 1e4 && UdAsSumBet < 1e7) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1e7) {
+            } else if (UdAsSumBet >= 1e7) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 2) {
+          if (elem.Sostav === "альфа") {
+            UdAsSumAlp += +elem.UdA
             console.log("2-2- elem.Sostav" + elem.Sostav);
-            if (elem.UdA < 1e2) {
+            if (UdAsSumAlp < 1e2) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-            } else if (elem.UdA >= 1e2 && elem.UdA < 1e3) {
+            } else if (UdAsSumAlp >= 1e2 && UdAsSumAlp < 1e3) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1e3 && elem.UdA < 1e6) {
+            } else if (UdAsSumAlp >= 1e3 && UdAsSumAlp < 1e6) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1e6) {
+            } else if (UdAsSumAlp >= 1e6) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
-          if (elem.Sostav === 3) {
+          if (elem.Sostav === "трансурановые") {
+            UdAsSumTra += +elem.UdA
             console.log("2-3- elem.Sostav" + elem.Sostav);
-            if (elem.UdA < 10) {
+            if (UdAsSumTra < 10) {
               if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-            } else if (elem.UdA >= 10 && elem.UdA < 1e2) {
+            } else if (UdAsSumTra >= 10 && UdAsSumTra < 1e2) {
               if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (elem.UdA >= 1e2 && elem.UdA < 1e5) {
+            } else if (UdAsSumTra >= 1e2 && UdAsSumTra < 1e5) {
               if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (elem.UdA >= 1e5) {
+            } else if (UdAsSumTra >= 1e5) {
               if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
             }
           }
@@ -269,13 +307,17 @@ export default {
           this.codRAO[1].value = 9;
         }
       });
+      console.log("UdAsSumTri = " + UdAsSumTri);
+      console.log("UdAsSumBet = " + UdAsSumBet);
+      console.log("UdAsSumAlp = " + UdAsSumAlp);
+      console.log("UdAsSumTra = " + UdAsSumTra);
       console.log("++=== kateg_RAO ===++");
     },
     checkSostav(selected) {
-      if (selected.Name_RN === "тритий") return 0; //тритий
-      if (selected.Num_TM > 92) return 3; //трансурановые
-      if (selected.Kod_gruppy === "б") return 1; //бета не трансурановые
-      if (selected.Kod_gruppy === "а") return 2; //альфа не трансурановые
+      if (selected.Name_RN === "тритий") return "тритий"; //тритий
+      if (selected.Num_TM > 92) return "трансурановые"; //трансурановые
+      if (selected.Kod_gruppy === "б") return "бета"; //бета не трансурановые
+      if (selected.Kod_gruppy === "а") return "альфа"; //альфа не трансурановые
     },
     setSostav(sostav) {
       console.log("--=== setSostav ===--");
@@ -351,19 +393,19 @@ export default {
         console.log(this.checkSostav(elem));
 
         switch (this.checkSostav(elem)) {
-          case 0:
+          case "тритий":
             sostav[0] = "1";
             console.log("Sostav[0] = 1");
             break;
-          case 1:
+          case "бета":
             sostav[0] = "1";
             console.log("Sostav[0] = 1");
             break;
-          case 2:
+          case "альфа":
             sostav[1] = "1";
             console.log("Sostav[1] = 1");
             break;
-          case 3:
+          case "трансурановые":
             sostav[2] = "1";
             console.log("Sostav[2] = 1");
             break;
@@ -397,7 +439,10 @@ export default {
       this.validNuclids = false
       this.codRAO[8].value = "**"
       this.selectedTypes = []
-      this.desc=""
+      this.desc = ""
+      this.sumAct = 0
+      this.mass = 0
+
       console.log("++=== reloadVar ===++");
     },
     closeDialog() {
@@ -435,7 +480,12 @@ export default {
       });
       // return this.typeRAO
     },
-
+    filteredMassItem(edizm) {
+      return this.massItems.filter((elem) => {
+        return elem.text === edizm
+      });
+      // return this.typeRAO
+    },
     kodRAO() {
       let cod = "";
       this.codRAO.forEach((elem) => {

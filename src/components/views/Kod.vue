@@ -84,7 +84,7 @@ export default {
       headers: [
         { text: "Радионуклид", value: "Name_RN" },
         { text: "Период полураспада", value: "Period" },
-        { text: "Удельная активность", value: "UdA" },
+        { text: "Удельная активность", value: "UdAUnit" },
         { text: "Вид излучения", value: "Vid_izluch" },
         { text: "Трансурановый", value: "Trans" },
         { text: "ПЗУА", value: "UdA_TRO" },
