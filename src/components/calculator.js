@@ -12,17 +12,17 @@ export default {
       nuclids: [],
       favoriteNuclids: 1,
       showUda: 0,
-      sumAct: 0,
-      obUdAct: 0,
-      mass: 0,
+      sumAct: null,
+      obUdAct: null,
+      mass: null,
       typeRAO: [],
       selected: {},
       selectedMin: {},
       selectedNuclids: [],
       showNuclidsTable: false,
-      listHeight: 60+'vh',
       // longlife: false,
       codRAO: [],
+      sostav: ["0", "0", "0"],             //[бета, альфа, трансурановые]
       dialog: false,
       kod: true,
       ozri: 2,
@@ -123,8 +123,9 @@ export default {
       console.log("this.sumAct = " + this.sumAct)
       console.log("this.mass = " + this.mass)
       console.log("this.selectedMass = " + this.selectedMass)
+      if (this.showUda === 2) {this.obUdAct = (+this.sumAct / (+this.mass * +this.selectedMass))}
 
-      elem.UdA = ((+this.sumAct / (+this.mass * +this.selectedMass)) * elem.Percent / 100).toFixed(2)
+      elem.UdA = (this.obUdAct * elem.Percent / 100).toFixed(2)
       console.log("elem.UdA = " + elem.UdA)
 
       console.log("++=== recalcUdA ===++");
@@ -190,10 +191,6 @@ export default {
     kateg_RAO() {
       console.log("--=== kateg_RAO ===--");
       this.codRAO[1].value = 0;
-      // let UdAsSumTri = this.UdAsSumTri
-      // let UdAsSumBet = this.UdAsSumBet
-      // let UdAsSumAlp = this.UdAsSumAlp
-      // let UdAsSumTra = this.UdAsSumTra
 
       let UdAsSumTri = 0
       let UdAsSumBet = 0
@@ -377,44 +374,37 @@ export default {
       console.log("this.codRAO[5].value = " + this.codRAO[5].value);
       console.log("++=== setPotential ===++");
     },
+    checkLongLife(elem) {
+      return elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31 ? true : false
+    },
+    setNuclidSostav(elem) {
+      switch (this.checkSostav(elem)) {
+        case "тритий":
+          this.sostav[0] = "1";
+          console.log("Sostav[0] = 1");
+          break;
+        case "бета":
+          this.sostav[0] = "1";
+          console.log("Sostav[0] = 1");
+          break;
+        case "альфа":
+          this.sostav[1] = "1";
+          console.log("Sostav[1] = 1");
+          break;
+        case "трансурановые":
+          this.sostav[2] = "1";
+          console.log("Sostav[2] = 1");
+          break;
+      }      
+    },
     calcCodRAO() {
       console.log("--=== calcCodRAO ===--");
       let longlife = false;
       this.codRAO[5].value = 0;
-      let sostav = ["0", "0", "0"]; //[бета, альфа, трансурановые]
-      console.log("1. selectedNuclids length = " + this.selectedNuclids.length);
-      console.log("2. selectedNuclids: ")
-      console.log(this.selectedNuclids)
       this.selectedNuclids.forEach((elem, i) => {
-        if (elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31)
-          longlife = true;
-
-        console.log("elem.Sostav = " + i);
-        console.log(this.checkSostav(elem));
-
-        switch (this.checkSostav(elem)) {
-          case "тритий":
-            sostav[0] = "1";
-            console.log("Sostav[0] = 1");
-            break;
-          case "бета":
-            sostav[0] = "1";
-            console.log("Sostav[0] = 1");
-            break;
-          case "альфа":
-            sostav[1] = "1";
-            console.log("Sostav[1] = 1");
-            break;
-          case "трансурановые":
-            sostav[2] = "1";
-            console.log("Sostav[2] = 1");
-            break;
-        }
-        // console.log("UdA = " + elem.UdA);
-        // console.log("MOI = " + elem.MOI);
-        // console.log("Udamza = " + elem.Udamza);
+        longlife = this.checkLongLife(elem)
+        this.setNuclidSostav(elem)
         elem.Udamza = elem.UdA / +elem.MOI;
-        // console.log("Udamza = " + elem.Udamza);
         let pot = this.calcPotential(elem);
         this.setPotential(pot)
         this.addNuclidFields(elem, pot)
@@ -422,7 +412,7 @@ export default {
       });
 
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
-      this.setSostav(sostav)
+      this.setSostav(this.sostav)
       this.kateg_RAO()
       console.log("4. this.codRAO[2].value =" + this.codRAO[2].value);
       console.log(this.codRAO);
@@ -433,15 +423,17 @@ export default {
     },
     reloadVar() {
       console.log("--=== reloadVar ===--");
-      this.selectedNuclids = []
+      this.selectedNuclids.splice(0)
       this.selected = {}
       this.codRAO = require("@/db/codRAO.json");
       this.validNuclids = false
       this.codRAO[8].value = "**"
       this.selectedTypes = []
       this.desc = ""
-      this.sumAct = 0
-      this.mass = 0
+      this.sumAct = null
+      this.mass = null
+      this.obUdAct = null
+      this.sostav = ["0", "0", "0"]
 
       console.log("++=== reloadVar ===++");
     },

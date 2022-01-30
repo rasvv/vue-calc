@@ -32,7 +32,7 @@
                       {{ codRAO[i].description }}
                     </v-col>
                     <v-col cols="2" class="pa-5">
-                      <h3>
+                      <h3 class="h1color">
                         {{ codRAO[i].value }}
                       </h3>
                     </v-col>

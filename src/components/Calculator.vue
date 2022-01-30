@@ -125,7 +125,7 @@
                     class="calc__item"
                   ></v-radio>
                   <v-radio
-                    label="Суммарная активность + масса"
+                    label="Суммарная активность + масса + %"
                     :value="2"
                     class="calc__item"
                   ></v-radio>
@@ -238,6 +238,8 @@
                                 recalcUdA(item);
                                 isdisb();
                               "
+                              @click="recalcUdA(item);
+                                isdisb();"
                               :rules="[rules.required, rules.percent]"
                               hide-details="auto"
                               suffix="%"
