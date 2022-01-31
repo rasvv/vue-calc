@@ -108,19 +108,10 @@ export default {
         });
     },
     copyToClipboard() {
-      // try {
       navigator.clipboard.writeText(this.kodRAO);
-      // } catch(e) {
-      //   throw e
-      // }
     },
     closeDialog() {
       this.$emit("close-dialog");
-    },
-  },
-  computed: {
-    show_Kod() {
-      return localStorage.MODAL_NAME === "show_Kod_Form";
     },
   },
 };

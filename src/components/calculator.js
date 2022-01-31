@@ -12,6 +12,7 @@ export default {
       nuclids: [],
       favoriteNuclids: 1,
       showUda: 0,
+      UdAKey: 0,
       sumAct: null,
       obUdAct: null,
       mass: null,
@@ -37,7 +38,7 @@ export default {
         'overflow-y': 'scroll'
       },
       rightPanel: {
-        height: '60vh'
+        height: '56vh'
       },
       headers: [
         { text: "Радионуклид", value: "Name_RN" },
@@ -111,6 +112,7 @@ export default {
       if (this.selectedNuclids.length === 0) return false;
       console.log(this.selectedNuclids);
       this.selectedNuclids.forEach((elem) => {
+        elem.UdA = this.replaceExponent(elem.UdA)
         console.log(elem.UdA);
         if (!elem.UdA || elem.UdA <= 0) per = true;
       });
@@ -127,7 +129,7 @@ export default {
 
       elem.UdA = (this.obUdAct * elem.Percent / 100).toFixed(2)
       console.log("elem.UdA = " + elem.UdA)
-
+      this.UdAKey += 1
       console.log("++=== recalcUdA ===++");
     },
     parseSelected() {
@@ -418,14 +420,18 @@ export default {
       console.log(this.codRAO);
 
       this.showNuclidsTable = true
-      this.rightPanel.height = '40vh'
-      console.log("++=== calcCodRAO ===++");
+      console.log("++=== calcCodRAO ===++")
     },
     reloadVar() {
-      console.log("--=== reloadVar ===--");
+      console.log("--=== reloadVar ===--")
       this.selectedNuclids.splice(0)
+      this.selectedNuclids = []
+      console.log("this.selectedNuclids")
+      console.log(this.selectedNuclids)
       this.selected = {}
-      this.codRAO = require("@/db/codRAO.json");
+      // this.codRAO.splice(0)
+      this.codRAO = []
+      this.codRAO = require("@/db/codRAO.json")
       this.validNuclids = false
       this.codRAO[8].value = "**"
       this.selectedTypes = []
@@ -434,20 +440,36 @@ export default {
       this.mass = null
       this.obUdAct = null
       this.sostav = ["0", "0", "0"]
-
-      console.log("++=== reloadVar ===++");
+      console.log("++=== reloadVar ===++")
     },
     closeDialog() {
-      console.log("--=== closeDialog ===--");
+      console.log("--=== closeDialog ===--")
       this.showNuclidsTable = false
       this.reloadVar()
-      console.log("++=== closeDialog ===++");
-    }
+      console.log("++=== closeDialog ===++")
+    },
+    replaceExponent(value) {
+      console.log("--=== recalcSumActFilter ===--")
+      console.log("sumAct = " + this.sumAct)
+      value = value.toString()
+      value = value.replace(",", ".")
+      if (value.indexOf("e+") === -1) value = value.replace("+", "e+")
+      if (value.indexOf("e-") === -1) value = value.replace("-", "e-")
+      console.log("sumAct = " + value)
+      console.log("++=== recalcSumActFilter ===++")
+      return +value
+    },
+    recalcSumActFilter() {
+      this.sumAct = this.replaceExponent(this.sumAct)
+    },
+    recalcObUdActFilter() {
+      this.obUdAct = this.replaceExponent(this.obUdAct)
+    },
   },
   created() {
-    this.codRAO = require("@/db/codRAO.json");
-    this.nuclids = require("@/db/nuclids.json");
-    this.typeRAO = require("@/db/typeRAO.json");
+    this.codRAO = require("@/db/codRAO.json")
+    this.nuclids = require("@/db/nuclids.json")
+    this.typeRAO = require("@/db/typeRAO.json")
   },
   computed: {
     filteredNuclids() {

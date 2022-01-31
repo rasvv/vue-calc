@@ -133,10 +133,10 @@
                 <v-text-field
                   v-show="showUda === 1"
                   label="Удельная активность"
-                  type="number"
                   hide-details="auto"
                   clearable
                   v-model="obUdAct"
+                  @change="recalcObUdActFilter"
                   suffix="Бк/г"
                 ></v-text-field>
                 <v-row v-show="showUda === 2">
@@ -144,7 +144,7 @@
                     <v-text-field
                       label="Суммарная активность"
                       v-model="sumAct"
-                      type="number"
+                      @change="recalcSumActFilter"
                       hide-details="auto"
                       clearable
                       :rules="[rules.required]"
@@ -222,7 +222,6 @@
                           label="Удельная активность (Бк/г)"
                           v-show="showUda === 0"
                           v-model="item.UdA"
-                          type="number"
                           @change="isdisb()"
                           :rules="[rules.required]"
                           hide-details="auto"
@@ -238,8 +237,10 @@
                                 recalcUdA(item);
                                 isdisb();
                               "
-                              @click="recalcUdA(item);
-                                isdisb();"
+                              @click="
+                                recalcUdA(item);
+                                isdisb();
+                              "
                               :rules="[rules.required, rules.percent]"
                               hide-details="auto"
                               suffix="%"
@@ -249,6 +250,7 @@
                             <v-text-field
                               label="Удельная активность (Бк/г)"
                               :readonly="true"
+                              :key="UdAKey"
                               v-model="item.UdA"
                               type="number"
                               hide-details="auto"
@@ -276,33 +278,35 @@
             </div>
           </v-row>
         </v-container>
+        <v-row class="d-flex justify-center mt-6">
+          <v-dialog
+            v-model="showNuclidsTable"
+            persistent
+            transition="dialog-bottom-transition"
+            width="65vw"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="!enabledBTN"
+                height="50px"
+                width="50%"
+                @click="calcCodRAO"
+              >
+                Расчитать
+              </v-btn>
+            </template>
+            <Kod
+              :codRAO="codRAO"
+              :kodRAO="kodRAO"
+              :selectedNuclids="selectedNuclids"
+              v-on:close-dialog="closeDialog"
+            />
+          </v-dialog>
+        </v-row>
       </v-col>
-      <div>
-        <v-dialog
-          v-model="showNuclidsTable"
-          persistent
-          transition="dialog-bottom-transition"
-          width="65vw"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              :disabled="!enabledBTN"
-              width="150%"
-              @click="calcCodRAO"
-            >
-              Расчитать
-            </v-btn>
-          </template>
-          <Kod
-            :codRAO="codRAO"
-            :kodRAO="kodRAO"
-            :selectedNuclids="selectedNuclids"
-            v-on:close-dialog="closeDialog"
-          />
-        </v-dialog>
-      </div>
+      <div></div>
     </v-row>
   </v-container>
 </template>
