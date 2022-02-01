@@ -21,6 +21,6 @@ git commit -m 'deploy'
 
 # если вы публикуете по адресу https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:rasvv.github.io/vue-calc.git master:gh-pages
-git subtree push --prefix dist origin master:gh-pages
+git subtree push --prefix dist origin gh-pages
 
 cd -
