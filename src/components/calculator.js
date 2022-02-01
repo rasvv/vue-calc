@@ -16,6 +16,7 @@ export default {
       sumAct: null,
       obUdAct: null,
       mass: null,
+      sumPercents: 0,
       typeRAO: [],
       selected: {},
       selectedMin: {},
@@ -107,7 +108,25 @@ export default {
     setSelected() {
       // this.selected = this.nuclids[i]
     },
+    checkPercents() {
+      console.log("--=== addNuclidFields ===--");
+      this.sumPercents = 0
+      console.log("sumPercents = " + this.sumPercents);
+      if (this.selectedNuclids.length === 0) return false;
+      this.selectedNuclids.forEach((elem) => {
+        this.sumPercents += +elem.Percent
+      console.log("sumPercents = " + this.sumPercents);
+    });
+      if (this.sumPercents > 100) {
+        alert("Сумма значений процентов не может превышать 100!")
+        return false
+      }
+      console.log("sumPercents = " + this.sumPercents);
+      console.log("++=== addNuclidFields ===++");
+      return true
+    },
     isdisb() {
+      if (!this.checkPercents()) return this.validNuclids = false
       let per = false;
       if (this.selectedNuclids.length === 0) return false;
       console.log(this.selectedNuclids);
@@ -192,6 +211,7 @@ export default {
     },
     kateg_RAO() {
       console.log("--=== kateg_RAO ===--");
+      if (this.ozri === 1) return 4
       this.codRAO[1].value = 0;
 
       let UdAsSumTri = 0
@@ -424,7 +444,11 @@ export default {
     },
     reloadVar() {
       console.log("--=== reloadVar ===--")
-      this.selectedNuclids.splice(0)
+      this.selectedNuclids.forEach((elem) => {
+         elem.Percent = null
+         elem.UdA = null
+      })
+      this.selectedNuclids.splice(0, this.selectedNuclids.length + 1, {})
       this.selectedNuclids = []
       console.log("this.selectedNuclids")
       console.log(this.selectedNuclids)
@@ -450,7 +474,10 @@ export default {
     },
     replaceExponent(value) {
       console.log("--=== recalcSumActFilter ===--")
-      console.log("sumAct = " + this.sumAct)
+      console.log("value = " + value)
+      // if (value.toString().indexOf(",") === -1 && value.toString().indexOf("+") === -1 && value.toString().indexOf("-") === -1) return +value
+      if (!value) return false
+      if (value && +value) return +value
       value = value.toString()
       value = value.replace(",", ".")
       if (value.indexOf("e+") === -1) value = value.replace("+", "e+")
