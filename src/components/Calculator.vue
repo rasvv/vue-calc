@@ -350,9 +350,6 @@ html
       padding: 8px
       justify-content: start
 
-  &__selectnuclids
-// max-height: 95vh
-
 .v-btn:not(.v-btn--round).v-size--default
   width: 100%
   min-width: 0
