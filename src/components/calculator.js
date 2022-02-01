@@ -33,6 +33,7 @@ export default {
       rules: {
         required: value => !!value || 'Required.',
         percent: value => value <= 100 || 'Не более 100%',
+        percentPlus: value => value > 0 || 'Больше 0',
       },      
       leftPanel: {
         height: '40vh',
@@ -83,16 +84,20 @@ export default {
         });
     },		
     addNuclid() {
-
+      console.log("--=== addNuclid ===--");
+      // this.selected.UdA = ""
       this.selectedNuclids.push(this.selected);
       this.isdisb();
+      console.log("++=== addNuclid ===++");
     },
     delNuclid() {
+      console.log("--=== delNuclid ===--");
       this.selectedNuclids.splice(
         this.selectedNuclids.indexOf(this.selectedMin),
         1
       );
       this.isdisb();
+      console.log("++=== delNuclid ===++");
     },
     addNuclidFields(selected, pot) {
       console.log("--=== addNuclidFields ===--");
@@ -105,11 +110,8 @@ export default {
       selected.Potential = `${pot} лет`;
       console.log("++=== addNuclidFields ===++");
     },
-    setSelected() {
-      // this.selected = this.nuclids[i]
-    },
     checkPercents() {
-      console.log("--=== addNuclidFields ===--");
+      console.log("--=== checkPercents ===--");
       this.sumPercents = 0
       console.log("sumPercents = " + this.sumPercents);
       if (this.selectedNuclids.length === 0) return false;
@@ -122,18 +124,23 @@ export default {
         return false
       }
       console.log("sumPercents = " + this.sumPercents);
-      console.log("++=== addNuclidFields ===++");
+      console.log("++=== checkPercents ===++");
       return true
     },
     isdisb() {
-      if (!this.checkPercents()) return this.validNuclids = false
       let per = false;
-      if (this.selectedNuclids.length === 0) return false;
-      console.log(this.selectedNuclids);
+      if (this.showUda != 0) {
+        if (!this.checkPercents()) return this.validNuclids = false
+        if (this.selectedNuclids.length === 0) return false;
+        console.log(this.selectedNuclids);        
+      }
       this.selectedNuclids.forEach((elem) => {
-        elem.UdA = this.replaceExponent(elem.UdA)
-        console.log(elem.UdA);
-        if (!elem.UdA || elem.UdA <= 0) per = true;
+        if (this.showUda === 0) {
+          elem.UdA = this.replaceExponent(elem.UdA)
+          this.UdAKey += 1
+          console.log(elem.UdA);					
+        }
+        if (!elem.UdA || elem.UdA <= 0 || elem.UdA == undefined) per = true;
       });
       per ? (this.isdisabled = false) : (this.isdisabled = true);
       this.validNuclids = this.isdisabled;
@@ -147,6 +154,7 @@ export default {
       if (this.showUda === 2) {this.obUdAct = (+this.sumAct / (+this.mass * +this.selectedMass))}
 
       elem.UdA = (this.obUdAct * elem.Percent / 100).toFixed(2)
+      if (+elem.UdA <= 0) elem.UdA = 0
       console.log("elem.UdA = " + elem.UdA)
       this.UdAKey += 1
       console.log("++=== recalcUdA ===++");
@@ -154,7 +162,12 @@ export default {
     parseSelected() {
       console.log("--=== parseSelected ===--");
       console.log(this.selectedTypes);
-      this.desc = this.selectedTypes.description;
+      if (this.selectedTypes === null) {
+        this.desc = ""
+        this.codRAO[8].value = "**"
+        return
+      }
+      this.desc = this.selectedTypes.description
       this.codRAO[8].value = this.selectedTypes.cod;
       let items = {};
       items.id = this.selectedTypes.cod;
@@ -376,6 +389,7 @@ export default {
       );
 
       let pot = (1.44 * Math.log(selected.UdA / udal) * per).toFixed(2);
+      if (pot < 0) pot = 0
       console.log(selected.Name_RN + " = " + pot);
       selected.Potential = pot;
       console.log("++=== calcPotential ===++");
@@ -473,24 +487,34 @@ export default {
       console.log("++=== closeDialog ===++")
     },
     replaceExponent(value) {
-      console.log("--=== recalcSumActFilter ===--")
-      console.log("value = " + value)
+      console.log("--=== replaceExponent ===--")
+      console.log("value1 = " + value)
       // if (value.toString().indexOf(",") === -1 && value.toString().indexOf("+") === -1 && value.toString().indexOf("-") === -1) return +value
-      if (!value) return false
+      if (!value || value == undefined) return ""
+      console.log("value2 = " + value)
       if (value && +value) return +value
+      console.log("value3 = " + value)
       value = value.toString()
       value = value.replace(",", ".")
       if (value.indexOf("e+") === -1) value = value.replace("+", "e+")
       if (value.indexOf("e-") === -1) value = value.replace("-", "e-")
       console.log("sumAct = " + value)
-      console.log("++=== recalcSumActFilter ===++")
-      return +value
+      console.log("++=== replaceExponent ===++")
+      if (+value <= 0) return 0
+      else return +value
     },
     recalcSumActFilter() {
-      this.sumAct = this.replaceExponent(this.sumAct)
+      console.log("--=== recalcSumActFilter ===--")
+      if (this.showUda === 2) this.sumAct = this.replaceExponent(this.sumAct)
+      console.log("++=== recalcSumActFilter ===++")
     },
     recalcObUdActFilter() {
+      console.log("--=== recalcObUdActFilter ===--")
       this.obUdAct = this.replaceExponent(this.obUdAct)
+      console.log("++=== recalcObUdActFilter ===++")
+    },
+    recalcUdActFilter(value) {
+      return this.replaceExponent(value)
     },
   },
   created() {
@@ -508,7 +532,8 @@ export default {
           return true;
         else
           return (
-            elem.Name_RN.indexOf(this.filter) > -1 &&
+            (elem.Name_RN.toLowerCase().indexOf(this.filter.toLowerCase()) > -1 ||
+            elem.Name_RN_Lat.toLowerCase().indexOf(this.filter.toLowerCase()) > -1) &&
             elem.favorite === this.favoriteNuclids
           );
       });

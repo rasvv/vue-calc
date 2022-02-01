@@ -220,6 +220,7 @@
                         {{ item.Name_RN }}
                         <v-text-field
                           label="Удельная активность (Бк/г)"
+                          :key="UdAKey"
                           v-show="showUda === 0"
                           v-model="item.UdA"
                           @change="isdisb()"
@@ -241,7 +242,11 @@
                                 recalcUdA(item);
                                 isdisb();
                               "
-                              :rules="[rules.required, rules.percent]"
+                              :rules="[
+                                rules.required,
+                                rules.percent,
+                                rules.percentPlus,
+                              ]"
                               hide-details="auto"
                               suffix="%"
                             ></v-text-field>
@@ -316,88 +321,87 @@
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
 html
-  box-sizing: border-box
-  margin: 0
-  padding: 0
+	box-sizing: border-box
+	margin: 0
+	padding: 0
 
 .calc
-  &__form
-    min-height: 1020px
-    height: 95vh
-    display: flex
-    justify-content: center
+	&__form
+		min-height: 1020px
+		height: 95vh
+		display: flex
+		justify-content: center
 
-  &__types
-    padding: 5px
-    // margin: 0
+	&__types
+		padding: 5px
 
-  &__item
-    display: inline-block
+	&__item
+		display: inline-block
 
-  &__items
-    width: 100%
-    display: flex
-    justify-content: space-around
-    display: block
-    gap: 30px
+	&__items
+		width: 100%
+		display: flex
+		justify-content: space-around
+		display: block
+		gap: 30px
 
-  &__nuclids
-    width: 100%
+	&__nuclids
+		width: 100%
 
-    &-card
-      border-bottom: 1px solid #ccc
-      width: 100%
-      padding: 8px
-      justify-content: start
+		&-card
+			border-bottom: 1px solid #ccc
+			width: 100%
+			padding: 8px
+			justify-content: start
 
 .v-btn:not(.v-btn--round).v-size--default
-  width: 100%
-  min-width: 0
-  padding: 0
-  margin-bottom: 10px
+	width: 100%
+	min-width: 0
+	padding: 0
+	margin-bottom: 10px
 
 .bordered
-  margin: 0
-  width: 100%
-  border: 1px solid lightblue
+	margin: 0
+	width: 100%
+	border: 1px solid lightblue
 
 .borred
-  height: 97vh
+	height: 97vh
 
 .buttons
-  padding: 0
-  gap: 30px
-  width: 100%
-  display: flex
-  flex-direction: column
-  justify-content: center
-  align-items: center
+	padding: 0
+	gap: 30px
+	width: 100%
+	display: flex
+	flex-direction: column
+	justify-content: center
+	align-items: center
 
 .gap
-  gap: 10px
+	gap: 10px
 
 .left
-  overflow-y: scroll
-  height: 40vh
+	overflow-y: scroll
+	height: 40vh
 
 .right
-  height: listHeight
+	height: listHeight
 
 .h100
-  height: 100vh
+	height: 100vh
 
 .nuclids__top
-  width: 100%
-  display: flex
-  justify-content: space-between
+	width: 100%
+	display: flex
+	justify-content: space-between
 
-  &-left
-    display: flex
-    flex-direction: column
-    justify-content: space-between
+	&-left
+		display: flex
+		flex-direction: column
+		justify-content: space-between
 
 .nuclids__bottom
-  width: 100%
-  display: flex
-  justify-content: space-between
+	width: 100%
+	display: flex
+	justify-content: space-between
 </style>

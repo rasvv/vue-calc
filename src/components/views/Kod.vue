@@ -16,7 +16,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-list max-height="50vh" dense>
+          <v-list dense>
             <v-list-item-group class="bordered py-3">
               <v-list-item-title flat>
                 <v-row>
