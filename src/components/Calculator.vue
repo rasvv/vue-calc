@@ -88,13 +88,13 @@
             <div class="nuclids__top">
               <v-col
                 cols="5"
-                class="d-flex flex-column justify-stretch"
                 height="100%"
+                class="d-flex justify-stretch flex-column calc__items"
               >
                 <v-radio-group
                   v-model="favoriteNuclids"
-                  row
-                  class="d-flex justify-start flex-column calc__items"
+                  column
+                  class="d-flex align-start flex-column calc__items"
                 >
                   <v-radio label="Все" :value="0" class="calc__item"></v-radio>
                   <v-radio
@@ -104,7 +104,7 @@
                   ></v-radio>
                 </v-radio-group>
                 <v-text-field
-                  class="d-flex justify-end flex-column"
+                  class="d-flex align-end flex-column"
                   label="Фильтр"
                   hide-details="auto"
                   clearable
@@ -130,40 +130,68 @@
                     class="calc__item"
                   ></v-radio>
                 </v-radio-group>
-                <v-text-field
-                  v-show="showUda === 1"
-                  label="Удельная активность"
-                  hide-details="auto"
-                  clearable
-                  v-model="obUdAct"
-                  @change="recalcObUdActFilter"
-                  suffix="Бк/г"
-                ></v-text-field>
-                <v-row v-show="showUda === 2">
-                  <v-col cols="5">
+
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
                     <v-text-field
-                      label="Суммарная активность"
-                      v-model="sumAct"
-                      @change="recalcSumActFilter"
+                      v-bind="attrs"
+                      v-on="on"
+                      v-show="showUda === 1"
+                      label="Удельная активность"
                       hide-details="auto"
                       clearable
-                      :rules="[rules.required]"
-                      suffix="Бк"
+                      v-model="obUdAct"
+                      @change="
+                        recalcObUdActFilter();
+                        recalcUdANuclids();
+                      "
+                      suffix="Бк/г"
                     ></v-text-field>
+                  </template>
+                  <span>
+                    Возможен ввод в экспоненциальной форме в формате "1.5+9"
+                  </span>
+                </v-tooltip>
+
+                <v-row v-show="showUda === 2" class="pb-0">
+                  <v-col cols="5" class="pb-0">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-bind="attrs"
+                          v-on="on"
+                          label="Суммарная активность"
+                          v-model="sumAct"
+                          @change="
+                            recalcSumActFilter();
+                            recalcUdANuclids();
+                          "
+                          hide-details="auto"
+                          clearable
+                          :rules="[rules.required]"
+                          suffix="Бк"
+                        ></v-text-field>
+                      </template>
+                      <span>
+                        Возможен ввод в экспоненциальной форме в формате "1.5+9"
+                      </span>
+                    </v-tooltip>
                   </v-col>
-                  <v-col cols="4">
+                  <v-col cols="4" class="pb-0">
                     <v-text-field
                       label="Масса"
                       type="number"
                       hide-details="auto"
+                      @change="recalcUdANuclids"
                       clearable
                       v-model="mass"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="3" class="pb-0">
                     <v-select
                       :items="massItems"
                       v-model="selectedMass"
+                      @change="recalcUdANuclids"
                       item-text="text"
                       item-value="value"
                       label="Ед. измер."
@@ -182,6 +210,9 @@
                         :key="i"
                         @click="selected = filteredNuclids[i]"
                         @dblclick="addNuclid"
+                        @dragstart="onDragStart(i)"
+                        @dragover.prevent
+                        draggable="true"
                       >
                         <!-- {{ i + 1 }} -->
                         <!-- `${ item.Name_RN } ${ (Name_RN_Lat) }` -->
@@ -198,16 +229,22 @@
                   />
                 </v-row>
               </v-col>
+
               <v-col cols="1" class="buttons">
                 <v-btn @click="addNuclid">
-                  <v-icon class="mx-0 mb-0">mdi-plus</v-icon>
+                  <v-icon class="mx-0 mb-0">mdi-arrow-right-bold</v-icon>
                 </v-btn>
                 <v-btn @click="delNuclid">
-                  <v-icon class="mx-0 mb-0">mdi-minus</v-icon>
+                  <v-icon class="mx-0 mb-0">mdi-arrow-left-bold</v-icon>
                 </v-btn>
               </v-col>
 
-              <v-col cols="6">
+              <v-col
+                cols="6"
+                @drop="onDrop"
+                @dragover.prevent
+                @dragenter.prevent
+              >
                 <v-list class="calc__nuclids">
                   <v-list-item-group class="bordered" :style="rightPanel">
                     <v-list-item
@@ -218,8 +255,9 @@
                     >
                       <div class="calc__nuclids-card">
                         {{ item.Name_RN }}
+
                         <v-text-field
-                          label="Удельная активность (Бк/г)"
+                          label="Удельная активность"
                           :key="UdAKey"
                           v-show="showUda === 0"
                           v-model="item.UdA"
@@ -227,7 +265,9 @@
                           :rules="[rules.required]"
                           hide-details="auto"
                           suffix="Бк/г"
+                          hint="Возможен ввод в экспоненциальной форме в формате '1.5+9'"
                         ></v-text-field>
+
                         <v-row v-show="showUda != 0">
                           <v-col cols="5">
                             <v-text-field
@@ -263,17 +303,6 @@
                             ></v-text-field>
                           </v-col>
                         </v-row>
-
-                        <!-- <v-text-field
-                          label="Масса (кг)"
-                          v-show="showUda === 2"
-                          v-model="item.UdA"
-                          type="number"
-                          @change="isdisb()"
-                          :rules="rules"
-                          hide-details="auto"
-                          suffix="кг"
-                        ></v-text-field> -->
                       </div>
                       <!-- {{ item.Name_RN }} -->
                     </v-list-item>
@@ -299,7 +328,7 @@
                 width="50%"
                 @click="calcCodRAO"
               >
-                Расчитать
+                Рассчитать
               </v-btn>
             </template>
             <Kod
@@ -385,6 +414,7 @@ html
 	height: 40vh
 
 .right
+	overflow-y: scroll
 	height: listHeight
 
 .h100
@@ -404,4 +434,9 @@ html
 	width: 100%
 	display: flex
 	justify-content: space-between
+
+// .v-text-field fieldset, .v-text-field .v-input__control
+// 	display: flex
+// 	flex-direction: column
+// 	justify-content: flex-end !important
 </style>
