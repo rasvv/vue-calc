@@ -100,7 +100,6 @@ export default {
   methods: {
     activeMenu(idx) {
       if (idx === 8) {
-        console.log(this.codRAO[8].radios);
         return this.codRAO[8].radios;
       } else
         return this.codRAO[idx].radios.filter((elem) => {
