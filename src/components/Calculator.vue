@@ -261,7 +261,7 @@
                           :key="UdAKey"
                           v-show="showUda === 0"
                           v-model="item.UdA"
-                          @change="isdisb()"
+                          @change="isCorrect()"
                           :rules="[rules.required]"
                           hide-details="auto"
                           suffix="Бк/г"
@@ -276,11 +276,11 @@
                               type="number"
                               @change="
                                 recalcUdA(item);
-                                isdisb();
+                                isCorrect();
                               "
                               @click="
                                 recalcUdA(item);
-                                isdisb();
+                                isCorrect();
                               "
                               :rules="[
                                 rules.required,
