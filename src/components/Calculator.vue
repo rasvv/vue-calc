@@ -9,7 +9,7 @@
             :idx="0"
             :row="true"
             :wrap="true"
-            :changeValie="changeValue"
+            :changeValue="changeValue"
             class="bordered"
           />
         </v-row>
