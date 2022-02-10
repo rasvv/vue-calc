@@ -22,13 +22,15 @@ export default {
       showlog: false,
       // longlife: false,
       codRAO: [],
-			classRAO: [],
+      classRAO: [],
+      classTRO: 4,
       typeRAO: [],
       sostav: ["0", "0", "0"],             //[бета, альфа, трансурановые]
       dialog: false,
       kod: true,
       ozri: 2,
       selectedTypes: [],
+      UdAsSum: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
       desc: "",
       rules: {
         required: value => !!value || 'Введите значение',
@@ -70,13 +72,15 @@ export default {
     copyToClipboard() {
       navigator.clipboard.writeText(this.kodRAO);
     },
+
     activeMenu(idx) {
       return idx === 8
         ?  this.codRAO[8].radios
         : this.codRAO[idx].radios.filter((elem) => {
           return elem.id === this.codRAO[idx].value
         })
-    },		
+    },
+
     addNuclid() {
       this.log("--=== addNuclid ===--");
       if (this.selectedNuclids.length === 0 || !this.checkExistsNuclid(this.selected.Name_RN)) {
@@ -85,6 +89,7 @@ export default {
       }
       this.log("++=== addNuclid ===++");
     },
+
     delNuclid() {
       this.log("--=== delNuclid ===--");
       this.selectedNuclids.splice(
@@ -94,21 +99,33 @@ export default {
       this.isCorrect();
       this.log("++=== delNuclid ===++");
     },
+
+    toExp(value) {
+      return value > 10000 ? value.toPrecision(3)	: value
+    },
+
     addNuclidFields(selected, pot) {
       this.log("--=== addNuclidFields ===--");
       selected.Trans = this.isTrans(selected.Num_TM);
-      selected.Period = `${selected.Period_p_r} ${selected.Edinica_izmer_p_r}`;
+      selected.Period = `${this.toExp(selected.Period_p_r)} ${selected.Edinica_izmer_p_r}`
+      this.log("selected.UdA_TRO = " + selected.UdA_TRO)
+      this.log("selected.Uda_GRO = " + selected.UdA_GRO)
+
+      this.codRAO[0].value === 2 ? selected.PZUA = +selected.UdA_TRO : selected.PZUA = +selected.UdA_GRO
       selected.UdAUnit = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
       selected.Udamza = selected.UdA / +selected.MOI;
-      selected.Potential = `${pot} лет`;
+      selected.Potential = `${this.toExp(pot)} лет`;
       this.log("++=== addNuclidFields ===++");
+      this.log("selected.PZUA = " + selected.PZUA)
     },
+
     calcPercentsSum() {
       let sumPercents = 0
       this.selectedNuclids.forEach((elem) => {sumPercents += +elem.Percent})
       return sumPercents
     },
+
     checkPercents() {
       this.log("--=== checkPercents ===--");
       if (this.selectedNuclids.length === 0) return false;
@@ -129,7 +146,7 @@ export default {
       }
       this.selectedNuclids.forEach((elem) => {
         if (this.showUda === 0) {
-          elem.UdA = this.replaceExponent(elem.UdA).toPrecision(3)
+          if (elem.UdA) elem.UdA = this.toExp(this.replaceExponent(elem.UdA))
           this.UdAKey += 1
           this.log(elem.UdA);					
         }
@@ -145,9 +162,9 @@ export default {
       // this.log("this.sumAct = " + this.sumAct)
       // this.log("this.mass = " + this.mass)
       // this.log("this.selectedMass = " + this.selectedMass)
-      if (this.showUda === 2) {this.obUdAct = (+this.sumAct / (+this.mass * +this.selectedMass)).toPrecision(3)}
+      if (this.showUda === 2) {this.obUdAct = this.toExp((+this.sumAct / (+this.mass * +this.selectedMass)))}
 
-      elem.UdA = (this.obUdAct * elem.Percent / 100).toPrecision(3)
+      elem.UdA = this.toExp(this.obUdAct * elem.Percent / 100)
       if (+elem.UdA <= 0) elem.UdA = 0
       // this.log("elem.UdA = " + elem.UdA)
       this.UdAKey += 1
@@ -167,29 +184,45 @@ export default {
       let items = {}
       items.id = this.selectedTypes.cod
       items.text = this.desc
-			this.selectedTypes.cod === "94" ? this.codRAO[7].value = 5 : this.codRAO[7].value = 0
+      this.selectedTypes.cod === "94" ? this.codRAO[7].value = 5 : this.codRAO[7].value = 0
       this.codRAO[8].radios.splice(0, 1, items)
       this.log(this.codRAO[8].radios)
       this.log("++=== parseSelected ===++")
     },
+
     setOZRI() {
       this.log("--=== setOZRI ===--")
       this.ozri === 1 
-			? this.codRAO[1].value = 4 
-			: this.codRAO[1].value = 0
+      ? this.codRAO[1].value = 4 
+      : this.codRAO[1].value = 0
       this.log("++=== setOZRI ===++")
     },
+
     setShowKod() {
       this.log("--=== setShowKod ===--")
       this.$emit((this.showKod = false))
       this.log(this.showKod)
       this.log("++=== setShowKod ===++")
     },
-    changeValue() {
+
+    checkEnabledItems(idx) {
+      let vard = false
+      this.codRAO[idx].radios.filter((elem) => {
+        if (!vard && elem.id === this.codRAO[idx].value && elem.enabled.includes(this.section))
+          vard = true
+      })
+      return vard
+    },
+
+    changeValue(idx) {
       this.log("--=== changeValue ===--")
-      if (this.idx === 0) this.codRAO[8].value = "**"
+      if (idx === 0) {
+        if (!this.checkEnabledItems(6)) this.codRAO[6].value = 0
+        if (!this.checkEnabledItems(7)) this.codRAO[7].value = 0
+      }
       this.log("++=== changeValue ===++")
-    },		
+    },
+
     per_pr_min(perVal, per) {
       switch (per) {
         case "лет":
@@ -204,6 +237,7 @@ export default {
           return perVal;
       }
     },
+
     per_pr_year(perVal, per) {
       switch (per) {
         case "лет":
@@ -218,162 +252,112 @@ export default {
           return perVal / 60 / 24 / 365;
       }
     },
-		getClass_RAO(nuclid, value) {
-			this.filteredClassTRO(nuclid, value)
-		},
-		calcClass_RAO(tri, bet, alp, tra) {
 
-		},
+    checkClass_RAO() {
+      let ar = []
+      let res = true
+      let long = 0
+      let shor = 0
+
+      for (let i = 0; i < 4; i++) {
+        let val = this.UdAsSum[i][2]
+        let nuc = this.classTRO[i].nuclid
+        ar = this.filteredClassTRO(nuc, val)
+        ar = this.filteredClassTRO(nuc, val)
+        if (ar.length > 0) {
+          long = +ar[0].long
+          shor = +ar[0].short
+        }
+        // if (long < classTRO) classTRO = long
+        // if (shor < classTRO) classTRO = shor
+      }
+      // ar = this.calcCategory_RAO()
+      this.codRAO[4].value === 1 ? this.classTRO = long : this.classTRO = shor
+      console.log("this.codRAO[7].value = " + this.codRAO[7].value)
+      console.log("this.classTRO = " + this.classTRO)
+
+      if (this.codRAO[7].value != 0 && this.codRAO[7].value != this.classTRO) {
+        res = false
+      } 
+      console.log("res = " + res)
+      return res
+    },
+
+    calcCategory_RAO() {
+      let ar = []
+      let categ = 0
+      let catt = 0
+      for (let i = 0; i < 4; i++) {
+        let val = this.UdAsSum[i][2]
+
+        switch (this.codRAO[0].value) {
+          case 1: {
+            let nuc = this.classGRO[i].nuclid
+            ar = this.filteredClassGRO(nuc, val)
+            break
+          }
+          case 2: {
+            let nuc = this.classTRO[i].nuclid
+            ar = this.filteredClassTRO(nuc, val)
+            break
+          }
+        }
+
+        if (ar.length > 0) catt = +ar[0].sum
+        if (catt > categ) categ = catt
+      }
+      this.codRAO[1].value = categ
+      return ar[0]
+    },
+
     kateg_RAO() {
       this.log("--=== kateg_RAO ===--");
       if (this.ozri === 1) return 4
       this.codRAO[1].value = 0;
 
-      // let UdAsSumTri = 0
-      // let UdAsSumBet = 0
-      // let UdAsSumAlp = 0
-      // let UdAsSumTra = 0
-			
-      let UdAsSumTri = [0, 0, 0] // [долгоживущие, короткоживущие, сумма]
-      let UdAsSumBet = [0, 0, 0]
-      let UdAsSumAlp = [0, 0, 0]
-      let UdAsSumTra = [0, 0, 0]
-
+      if (this.codRAO[0].value === 3) 
+      this.codRAO[1].value = 9
+      else 
       this.selectedNuclids.forEach((elem) => {
         this.log("kateg_RAO() elem.Sostav = " + elem.Sostav);
         // elem.Udamza = elem.UdA / +elem.MOI
-        if (this.codRAO[0].value === 1) {
-          if (elem.Sostav === "тритий") {
-            UdAsSumTri += +elem.UdA
-            if (UdAsSumTri< 1 * 10e4) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            }
-						if (UdAsSumTri >= 1 * 10e4 && UdAsSumTri < 1 * 10e8) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            }
-						if (UdAsSumTri >= 1 * 10e8) {
-              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-            }
+
+        switch (elem.Sostav){
+          case "тритий": {
+            this.checkLongLife(elem) ? this.UdAsSum[0][0] += +elem.UdA : this.UdAsSum[0][1] += +elem.UdA
+            this.UdAsSum[0][2] += +elem.UdA
+            break
           }
-          if (elem.Sostav === "бета") {
-            UdAsSumBet += +elem.UdA
-            if (UdAsSumBet < 1 * 10e3) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (UdAsSumBet >= 1 * 10e3 && UdAsSumBet < 1 * 10e7) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (UdAsSumBet >= 1 * 10e7) {
-              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-            }
+          case "бета": {
+            this.checkLongLife(elem) ? this.UdAsSum[1][0] += +elem.UdA : this.UdAsSum[1][1] += +elem.UdA
+            this.UdAsSum[1][2] += +elem.UdA
+            break
           }
-          if (elem.Sostav === "альфа") {
-            UdAsSumAlp += +elem.UdA
-            if (UdAsSumAlp < 1 * 10e2) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (UdAsSumAlp >= 1 * 10e2 && UdAsSumAlp < 1 * 10e6) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (UdAsSumAlp >= 1 * 10e6) {
-              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-            }
+          case "альфа": {
+            this.checkLongLife(elem) ? this.UdAsSum[2][0] += +elem.UdA : this.UdAsSum[2][1] += +elem.UdA
+            this.UdAsSum[2][2] += +elem.UdA
+            break
           }
-          if (elem.Sostav === "трансурановые") {
-            UdAsSumTra += +elem.UdA
-            if (UdAsSumTra < 10) {
-              if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-            } else if (UdAsSumTra >= 10 && UdAsSumTra < 1 * 10e5) {
-              if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-            } else if (UdAsSumTra >= 1 * 10e5) {
-              if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-            }
+          case "трансурановые": {
+            this.checkLongLife(elem) ? this.UdAsSum[3][0] += +elem.UdA : this.UdAsSum[3][1] += +elem.UdA
+            this.UdAsSum[3][2] += +elem.UdA
+            break
           }
         }
-        if (this.codRAO[0].value === 2) {
-          this.log("this.codRAO[1].value = " + this.codRAO[1].value);
-					switch (elem.Sostav){
-						case "тритий": {
-							checkLongLife(elem) ? UdAsSumTri[0] += +elem.UdA : UdAsSumTri[1] += +elem.UdA
-							UdAsSumTri[2] += +elem.UdA
-						}
-						case "бета": {
-							checkLongLife(elem) ? UdAsSumBet[0] += +elem.UdA : UdAsSumBet[1] += +elem.UdA
-							UdAsSumBet[2] += +elem.UdA
-						}
-						case "альфа": {
-							checkLongLife(elem) ? UdAsSumAlp[0] += +elem.UdA : UdAsSumAlp[1] += +elem.UdA
-							UdAsSumAlp[2] += +elem.UdA
-						}
-						case "трансурановые": {
-							checkLongLife(elem) ? UdAsSumTra[0] += +elem.UdA : UdAsSumTra[1] += +elem.UdA
-							UdAsSumTra[2] += +elem.UdA
-						}
-					}
 
-
-
-          // if (elem.Sostav === "тритий") {
-          //   UdAsSumTri += +elem.UdA
-          //   if (UdAsSumTri < 1e7) {
-          //     if (this.codRAO[1].value < 0) this.codRAO[1].value = 0;
-          //   } else if (UdAsSumTri >= 1e7 && UdAsSumTri < 1e8) {
-          //     if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-          //   } else if (UdAsSumTri >= 1e8 && UdAsSumTri < 1e11) {
-          //     if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-          //   } else if (UdAsSumTri >= 1e11) {
-          //     if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-          //   }
-          // }
-          // if (elem.Sostav === "бета") {
-          //   UdAsSumBet += +elem.UdA
-          //   if (UdAsSumBet < 1e3) {
-          //     if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-          //   } else if (UdAsSumBet >= 1e3 && UdAsSumBet < 1e4) {
-          //     if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-          //   } else if (UdAsSumBet >= 1e4 && UdAsSumBet < 1e7) {
-          //     if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-          //   } else if (UdAsSumBet >= 1e7) {
-          //     if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-          //   }
-          // }
-          // if (elem.Sostav === "альфа") {
-          //   UdAsSumAlp += +elem.UdA
-          //   if (UdAsSumAlp < 1e2) {
-          //     if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-          //   } else if (UdAsSumAlp >= 1e2 && UdAsSumAlp < 1e3) {
-          //     if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-          //   } else if (UdAsSumAlp >= 1e3 && UdAsSumAlp < 1e6) {
-          //     if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-          //   } else if (UdAsSumAlp >= 1e6) {
-          //     if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-          //   }
-          // }
-          // if (elem.Sostav === "трансурановые") {
-          //   UdAsSumTra += +elem.UdA
-          //   if (UdAsSumTra < 10) {
-          //     if (this.codRAO[1].value === 0) this.codRAO[1].value = 0;
-          //   } else if (UdAsSumTra >= 10 && UdAsSumTra < 1e2) {
-          //     if (this.codRAO[1].value < 1) this.codRAO[1].value = 1;
-          //   } else if (UdAsSumTra >= 1e2 && UdAsSumTra < 1e5) {
-          //     if (this.codRAO[1].value < 2) this.codRAO[1].value = 2;
-          //   } else if (UdAsSumTra >= 1e5) {
-          //     if (this.codRAO[1].value < 3) this.codRAO[1].value = 3;
-          //   }
-          // }
-        }
-        if (this.codRAO[0].value === 3) {
-          this.codRAO[1].value = 9;
-        }
+        this.calcCategory_RAO()
       });
-      this.log("UdAsSumTri = " + UdAsSumTri);
-      this.log("UdAsSumBet = " + UdAsSumBet);
-      this.log("UdAsSumAlp = " + UdAsSumAlp);
-      this.log("UdAsSumTra = " + UdAsSumTra);
+      this.log(this.UdAsSum)
       this.log("++=== kateg_RAO ===++");
     },
+
     checkSostav(selected) {
       if (selected.Name_RN === "тритий") return "тритий"; //тритий
       if (selected.Num_TM > 92) return "трансурановые"; //трансурановые
       if (selected.Kod_gruppy === "б") return "бета"; //бета не трансурановые
       if (selected.Kod_gruppy === "а") return "альфа"; //альфа не трансурановые
     },
+
     setSostav(sostav) {
       this.log("--=== setSostav ===--");
       this.log(sostav);
@@ -395,9 +379,11 @@ export default {
       this.log("++=== setSostav ===++");
       return this.codRAO[2].value
     },
+
     isTrans(Num_TM) {
       return Num_TM > 92 ? "да" : "нет";
     },
+
     calcPotential(selected) {
       let udal = +selected.MOI;
       this.log("--=== calcPotential ===--");
@@ -418,6 +404,7 @@ export default {
       this.log("++=== calcPotential ===++");
       return selected.Potential = pot;
     },
+
     setPotential(pot) {
       this.log("--=== setPotential ===--");
       this.log("pot = " + pot);
@@ -433,9 +420,11 @@ export default {
       this.log("this.codRAO[5].value = " + this.codRAO[5].value);
       this.log("++=== setPotential ===++");
     },
+
     checkLongLife(elem) {
       return elem.Edinica_izmer_p_r === "лет" && elem.Period_p_r > 31 ? true : false
     },
+
     setNuclidSostav(elem) {
       switch (this.checkSostav(elem)) {
         case "тритий":
@@ -456,12 +445,13 @@ export default {
           break;
       }      
     },
+
     calcCodRAO() {
       this.log("--=== calcCodRAO ===--");
       let longlife = false;
       this.codRAO[5].value = 0;
       this.selectedNuclids.forEach((elem, i) => {
-        longlife = this.checkLongLife(elem)
+        if (!longlife) this.checkLongLife(elem) ? longlife = this.checkLongLife(elem) : longlife = false
         this.setNuclidSostav(elem)
         elem.Udamza = elem.UdA / +elem.MOI;
         let pot = this.calcPotential(elem);
@@ -472,13 +462,15 @@ export default {
 
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
       this.setSostav(this.sostav)
-      this.kateg_RAO()
-      this.log("4. this.codRAO[2].value =" + this.codRAO[2].value);
-      this.log(this.codRAO);
-
-      this.showNuclidsTable = true
+      this.kateg_RAO() 
+      if (this.codRAO[0].value === 2) {
+        this.checkClass_RAO() 
+          ? this.showNuclidsTable = false 
+          : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRO +'.')
+      }
       this.log("++=== calcCodRAO ===++")
     },
+
     reloadVar() {
       this.log("--=== reloadVar ===--")
       this.selectedNuclids.forEach((elem) => {
@@ -493,7 +485,9 @@ export default {
       // this.codRAO.splice(0)
       this.codRAO = []
       this.codRAO = require("@/db/codRAO.json")
-      this.validNuclids = false
+      this.UdAsSum = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+      //[тритий:[долго, коротко, сумма], бета[...], альфа[...], транс[...]]
+
       this.codRAO[8].value = "**"
       this.selectedTypes = []
       this.desc = ""
@@ -503,12 +497,14 @@ export default {
       this.sostav = ["0", "0", "0"]
       this.log("++=== reloadVar ===++")
     },
+
     closeDialog() {
       this.log("--=== closeDialog ===--")
       this.showNuclidsTable = false
       this.reloadVar()
       this.log("++=== closeDialog ===++")
     },
+
     replaceExponent(value) {
       this.log("--=== replaceExponent ===--")
       this.log("value1 = " + value)
@@ -528,22 +524,27 @@ export default {
       if (+value <= 0) return 0
       else return +value
     },
+
     recalcSumActFilter() {
       this.log("--=== recalcSumActFilter ===--")
-      if (this.showUda === 2) this.sumAct = this.replaceExponent(this.sumAct).toPrecision(3)
+      if (this.showUda === 2) this.sumAct = this.toExp(this.replaceExponent(this.sumAct))
       this.log("++=== recalcSumActFilter ===++")
     },
+
     recalcObUdActFilter() {
       this.log("--=== recalcObUdActFilter ===--")
-      this.obUdAct = this.replaceExponent(this.obUdAct).toPrecision(3)
+      this.obUdAct = this.toExp(this.replaceExponent(this.obUdAct))
       this.log("++=== recalcObUdActFilter ===++")
     },
+
     recalcUdActFilter(value) {
       return this.replaceExponent(value)
     },
+
     // recalcMassExp() {
     //   this.mass = this.replaceExponent(this.mass)
     // },
+
     recalcUdANuclids() {
       if (this.selectedNuclids.length > 0) {
         this.selectedNuclids.forEach((elem) => {
@@ -551,6 +552,7 @@ export default {
         })
       }
     },
+
     checkExistsNuclid(name) {
       let exists = false
       this.selectedNuclids.forEach((elem) => {
@@ -558,6 +560,7 @@ export default {
       })
       return exists ? true : false
     },
+
     onDragStart(i) {
       this.log("--=== onDragStart ===--")
       this.selected = this.filteredNuclids[i]
@@ -565,11 +568,13 @@ export default {
       this.log("selected = " + this.selected.Name_RN)
       this.log("++=== onDragStart ===++")
     },
+
     onDrop() {
       this.log("--=== onDrop ===--")
       this.addNuclid()
       this.log("++=== onDrop ===++")
     },
+
     checkFilter(filter) {
       this.log("this.filter1 = " + this.filter);
       if (filter === null) return true
@@ -577,15 +582,48 @@ export default {
       if (filter == "" || !filter) return true
       return false
     },
+
     log(txt) {
       if (this.showlog) console.log(txt);
-    }
+    },
+
+    filteredClassTRO(nuclid, value) {
+      return this.filteredClassNuclidTRO(nuclid)[0].ranges.filter((elem) => {
+        return elem.begin < value && value <= elem.end
+      });
+      // console.log("++=== filteredClassTRO ===++");
+    },
+
+    filteredClassNuclidTRO(nuclid) {
+      this.log("--=== filteredClassNuclidTRO ===--");
+      return this.classTRO.filter((elem) => {
+        return elem.nuclid === nuclid
+      });
+      // console.log("++=== filteredClassNuclidTRO ===++");
+    },
+
+    filteredClassGRO(nuclid, value) {
+      return this.filteredClassNuclidGRO(nuclid)[0].ranges.filter((elem) => {
+        return elem.begin < value && value <= elem.end
+      });
+      // console.log("++=== filteredClassTRO ===++");
+    },
+
+    filteredClassNuclidGRO(nuclid) {
+      this.log("--=== filteredClassNuclidGRO ===--");
+      return this.classGRO.filter((elem) => {
+        return elem.nuclid === nuclid
+      });
+      // console.log("++=== filteredClassNuclidTRO ===++");
+    },		
   },
+
   created() {
     this.codRAO = require("@/db/codRAO.json")
     this.nuclids = require("@/db/nuclids.json")
     this.typeRAO = require("@/db/typeRAO.json")
-    this.classRAO = require("@/db/classRAO.json")
+    this.classTRO = require("@/db/classTRO.json")
+    this.classGRO = require("@/db/classGRO.json")
   },
   computed: {
     filteredNuclids() {
@@ -627,16 +665,7 @@ export default {
       });
       // return this.typeRAO
     },
-    filteredClassTRO(nuclid, value) {
-      return this.filteredClassNuclidTRO(nuclid).filter((elem) => {
-        return elem.begin > value && value <= elem.end
-      });
-    },		
-    filteredClassNuclidTRO(nuclid) {
-      return this.classRAO.filter((elem) => {
-        return elem.nuclid === nuclid
-      });
-    },		
+    
     kodRAO() {
       let cod = "";
       this.codRAO.forEach((elem) => {
@@ -648,11 +677,12 @@ export default {
     enabledBTN() {
       return this.validNuclids && this.codRAO[8].value != "**";
     },
-		section() {
-			return this.ozri === 1 && this.codRAO[0].value === 2
-			? 4
-			: this.codRAO[0].value
-
-		}
+    section() {
+      return this.ozri === 1 && this.codRAO[0].value === 2
+      ? 4
+      : this.codRAO[6].value > 1 && this.codRAO[0].value === 2
+        ? 5
+        : this.codRAO[0].value
+    }
   },
 };

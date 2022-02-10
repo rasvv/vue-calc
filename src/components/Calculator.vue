@@ -9,7 +9,8 @@
             :idx="0"
             :row="true"
             :wrap="true"
-            :changeValue="changeValue"
+            :enabled="section"
+            :changeValue="changeValue(0)"
             class="bordered"
           />
         </v-row>
@@ -32,18 +33,33 @@
           </v-col>
           <v-col cols="8" class="calc__types d-flex align-stretch">
             <!-- Содержание ядерных материалов -->
-            <Radios :codRAO="codRAO" :idx="3" class="bordered" />
+            <Radios
+              :codRAO="codRAO"
+              :idx="3"
+              :enabled="section"
+              class="bordered"
+            />
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="6" class="calc__types d-flex align-stretch">
             <!-- Способ переработки -->
-            <Radios :codRAO="codRAO" :idx="6" class="bordered" />
+            <Radios
+              :codRAO="codRAO"
+              :idx="6"
+              :enabled="section"
+              class="bordered"
+            />
           </v-col>
           <v-col cols="6" class="calc__types d-flex align-stretch">
             <!-- Класс РАО -->
-            <Radios :codRAO="codRAO" :idx="7" class="bordered" />
+            <Radios
+              :codRAO="codRAO"
+              :idx="7"
+              :enabled="section"
+              class="bordered"
+            />
           </v-col>
         </v-row>
 
@@ -77,6 +93,7 @@
             :idx="9"
             :row="true"
             :wrap="true"
+            :enabled="section"
             class="bordered"
           />
         </v-row>
@@ -319,10 +336,10 @@
             transition="dialog-bottom-transition"
             width="65vw"
           >
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ showNuclidsTable, attrs }">
               <v-btn
                 v-bind="attrs"
-                v-on="on"
+                v-on="showNuclidsTable"
                 :disabled="!enabledBTN"
                 height="50px"
                 width="50%"

@@ -12,6 +12,7 @@
       <v-radio
         v-for="(item, i) in codRAO[idx].radios"
         :key="i"
+        :disabled="!disabled(item, enabled)"
         :label="item.text"
         :value="item.id"
         class="calc__item"
@@ -22,14 +23,14 @@
 
 <script>
 export default {
-  props: ["codRAO", "idx", "row", "wrap", "changeValue"],
+  props: ["codRAO", "idx", "row", "wrap", "changeValue", "enabled"],
   data() {
     return {};
   },
   methods: {
-    // changeValue() {
-    //   if (this.idx === 0) this.codRAO[8].value = "**";
-    // },
+    disabled(elem, enable) {
+      return elem.enabled.includes(enable);
+    },
   },
 };
 </script>

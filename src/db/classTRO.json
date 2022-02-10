@@ -1,0 +1,145 @@
+[{
+		"nuclid": "тритий",
+		"ranges": [{
+				"id": "1",
+				"begin": "0",
+				"end": "1e7",
+				"long": "4",
+				"short": "4",
+				"sum": "0"
+			},
+			{
+				"id": "2",
+				"begin": "1e7",
+				"end": "1e8",
+				"long": "3",
+				"short": "4",
+				"sum": "1"
+			},
+			{
+				"id": "3",
+				"begin": "1e8",
+				"end": "1e11",
+				"long": "2",
+				"short": "3",
+				"sum": "2"
+			},
+			{
+				"id": "4",
+				"begin": "1e11",
+				"end": "1e100",
+				"long": "1",
+				"short": "2",
+				"sum": "3"
+			}
+		]
+	},
+	{
+		"nuclid": "бета",
+		"ranges": [{
+				"id": "1",
+				"begin": "0",
+				"end": "1e+3",
+				"long": "4",
+				"short": "4",
+				"sum": "0"
+			},
+			{
+				"id": "2",
+				"begin": "1e+3",
+				"end": "1e+4",
+				"long": "3",
+				"short": "4",
+				"sum": "1"
+			},
+			{
+				"id": "3",
+				"begin": "1e+4",
+				"end": "1e+7",
+				"long": "2",
+				"short": "3",
+				"sum": "2"
+			},
+			{
+				"id": "4",
+				"begin": "1e+7",
+				"end": "1e+100",
+				"long": "1",
+				"short": "2",
+				"sum": "3"
+			}
+		]
+	},
+	{
+		"nuclid": "альфа",
+		"ranges": [{
+				"id": "1",
+				"begin": "0",
+				"end": "1e2",
+				"long": "4",
+				"short": "4",
+				"sum": "0"
+			},
+			{
+				"id": "2",
+				"begin": "1e2",
+				"end": "1e3",
+				"long": "3",
+				"short": "4",
+				"sum": "1"
+			},
+			{
+				"id": "3",
+				"begin": "1e3",
+				"end": "1e6",
+				"long": "2",
+				"short": "3",
+				"sum": "2"
+			},
+			{
+				"id": "4",
+				"begin": "1e6",
+				"end": "1e100",
+				"long": "1",
+				"short": "2",
+				"sum": "3"
+			}
+		]
+	},
+	{
+		"nuclid": "трансурановые",
+		"ranges": [{
+				"id": "1",
+				"begin": "0",
+				"end": "10",
+				"long": "4",
+				"short": "4",
+				"sum": "0"
+			},
+			{
+				"id": "2",
+				"begin": "10",
+				"end": "1e2",
+				"long": "3",
+				"short": "4",
+				"sum": "1"
+			},
+			{
+				"id": "3",
+				"begin": "1e2",
+				"end": "1e5",
+				"long": "2",
+				"short": "3",
+				"sum": "2"
+			},
+			{
+				"id": "4",
+				"begin": "1e5",
+				"end": "1e100",
+				"long": "1",
+				"short": "2",
+				"sum": "3"
+			}
+		]
+	}
+]

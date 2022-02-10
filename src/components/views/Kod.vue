@@ -87,7 +87,11 @@ export default {
         { text: "Удельная активность", value: "UdAUnit" },
         { text: "Вид излучения", value: "Vid_izluch" },
         { text: "Трансурановый", value: "Trans" },
-        { text: "ПЗУА", value: "UdA_TRO" },
+        {
+          text: "ПЗУА",
+          value: "PZUA",
+        },
+        { text: "МУА", value: "MOI" },
         { text: "Период потенциальной опасности", value: "Potential" },
       ],
       codheaders: [
