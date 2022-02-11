@@ -10,7 +10,7 @@
             :row="true"
             :wrap="true"
             :enabled="section"
-            :changeValue="changeValue(0)"
+            :changeValue="changeValue"
             class="bordered"
           />
         </v-row>
@@ -72,12 +72,13 @@
               <v-combobox
                 v-model="selectedTypes"
                 :items="filteredTypeRAO"
+                :key="oldAgregate"
                 item-text="description"
                 item-value="cod"
                 auto-select-first
                 dense
                 clearable
-                @change="parseSelected"
+                @change="changeTypeRAO"
               >
               </v-combobox>
 
@@ -336,10 +337,10 @@
             transition="dialog-bottom-transition"
             width="65vw"
           >
-            <template v-slot:activator="{ showNuclidsTable, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
-                v-on="showNuclidsTable"
+                v-on="on"
                 :disabled="!enabledBTN"
                 height="50px"
                 width="50%"
