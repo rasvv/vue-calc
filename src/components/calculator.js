@@ -108,18 +108,16 @@ export default {
     addNuclidFields(selected, pot) {
       this.log("--=== addNuclidFields ===--");
       selected.Trans = this.isTrans(selected.Num_TM);
-      selected.Period = this.setPeriod_per_year(selected.Period_p_r, selected.Edinica_izmer_p_r)
+      selected.Period = `${this.toExp(selected.Period_p_r)} ${selected.Edinica_izmer_p_r}`
 
       this.codRAO[0].value === 2 ? selected.PZUA = +selected.UdA_TRO : selected.PZUA = +selected.UdA_GRO
       selected.UdAUnit = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
-      if (!selected.MOI || selected.MOI === "NULL" || selected.MOI === "-") {
-        selected.MOI = "-"
-        selected.Udamza = 0
-        // selected.Potential = `не определен`;        
-      } else {
+        this.log("addNuclidFields: pot =" + pot)
+        if (pot != "не определен") {
         selected.Udamza = selected.UdA / +selected.MOI
         selected.Potential = `${this.toExp(pot)} лет`
+        // selected.Potential = pot
       }
  
       this.log("++=== addNuclidFields ===++");
@@ -127,10 +125,12 @@ export default {
     },
 
     getMOI(MOI) {
-      (!+MOI || +MOI != "NULL" || +MOI != "-") 
-        ? MOI = '-'
-        : MOI = +MOI
-      return MOI  
+      this.log("getMOI(MOI).MOI = " + MOI)
+      +MOI && MOI != "NULL" && MOI != null && MOI != "-"
+        ? MOI = +MOI
+        : MOI = '-'
+      this.log("getMOI(MOI).+MOI =" + MOI)
+      return MOI
     },
 
     calcCodRAO() {
@@ -141,15 +141,22 @@ export default {
         if (!longlife) this.checkLongLife(elem) ? longlife = this.checkLongLife(elem) : longlife = false
         this.setNuclidSostav(elem)
         let pot = null
+        this.log("Before getMOI(MOI) elem.MOI =" + elem.MOI),
         elem.MOI = this.getMOI(elem.MOI) 
-        elem.MOI != '-' 
+        this.log("elem.MOI =" + elem.MOI),
+
+        elem.MOI === '-' 
           ? (
             pot = 'не определен',
-            this.codRAO[5].value = 0,
+            elem.Potential = 'не определен',
+            this.log("Pot не определен"),
+            elem.Udamza = 0,
+            // this.codRAO[5].value = 0,
             // this.setRAO_Potential(pot),
             this.addNuclidFields(elem, pot)
           )
           : (
+            this.log("Pot определен"),
             pot = this.calcPotential(elem),
             this.setRAO_Potential(pot),
             this.addNuclidFields(elem, pot)
@@ -247,15 +254,15 @@ export default {
     },
 
     checkEnabledItems(idx) {
-      console.log("--=== checkEnabledItems ===--")
-      console.log("idx = " + idx)
+      this.log("--=== checkEnabledItems ===--")
+      this.log("idx = " + idx)
       let vard = false
       this.codRAO[idx].radios.filter((elem) => {
         if (!vard && elem.id === this.codRAO[idx].value && elem.enabled.includes(this.section))
           vard = true
       })
       return vard
-      // console.log("++=== setShowKod ===++")
+      // this.log("++=== setShowKod ===++")
     },
 
     changeValue() {
@@ -274,30 +281,30 @@ export default {
     per_pr_min(perVal, per) {
       switch (per) {
         case "лет":
-          return perVal * 365 * 24 * 60;
+          return this.toExp(perVal * 365 * 24 * 60)
         case "мес":
-          return perVal * 31 * 24 * 60;
+          return this.toExp(perVal * 31 * 24 * 60)
         case "сут":
-          return perVal * 24 * 60;
+          return this.toExp(perVal * 24 * 60)
         case "час":
-          return perVal * 60;
+          return this.toExp(perVal * 60)
         case "мин":
-          return perVal;
+          return this.toExp(perVal)
       }
     },
 
     setPeriod_per_year(perVal, per) {
       switch (per) {
         case "лет":
-          return perVal;
+          return perVal
         case "мес":
-          return perVal / 12;
+          return perVal / 12
         case "сут":
-          return perVal / 365;
+          return perVal / 365
         case "час":
-          return perVal / 24 / 365;
+          return perVal / 24 / 365
         case "мин":
-          return perVal / 60 / 24 / 365;
+          return perVal / 60 / 24 / 365
       }
     },
 
@@ -310,12 +317,12 @@ export default {
       for (let i = 0; i < 4; i++) {
         let val = this.UdAsSum[i][2]
         let nuc = this.classTRO[i].nuclid
-        console.log("nuc = " + nuc)
-        console.log("val = " + val)
+        this.log("nuc = " + nuc)
+        this.log("val = " + val)
         ar = this.filteredClassTRO(nuc, val)
         if (ar.length > 0) {
-        console.log("+ar[0].long = " + +ar[0].long)
-        console.log("+ar[0].short = " + +ar[0].short)
+        this.log("+ar[0].long = " + +ar[0].long)
+        this.log("+ar[0].short = " + +ar[0].short)
 
           if (long > +ar[0].long) long = +ar[0].long
           if (shor > +ar[0].short) shor = +ar[0].short
@@ -326,13 +333,13 @@ export default {
       }
       // ar = this.calcCategory_RAO()
       this.codRAO[4].value === 1 ? this.classTRO = long : this.classTRO = shor
-      console.log("this.codRAO[7].value = " + this.codRAO[7].value)
-      console.log("this.classTRO = " + this.classTRO)
+      this.log("this.codRAO[7].value = " + this.codRAO[7].value)
+      this.log("this.classTRO = " + this.classTRO)
 
       if (this.codRAO[7].value != 0 && this.codRAO[7].value != this.classTRO) {
         res = false
       } 
-      console.log("res = " + res)
+      this.log("res = " + res)
       return res
     },
 
@@ -618,7 +625,7 @@ export default {
       return this.filteredClassNuclidTRO(nuclid)[0].ranges.filter((elem) => {
         return elem.begin < value && value <= elem.end
       });
-      // console.log("++=== filteredClassTRO ===++");
+      // this.log("++=== filteredClassTRO ===++");
     },
 
     filteredClassNuclidTRO(nuclid) {
@@ -626,14 +633,14 @@ export default {
       return this.classTRO.filter((elem) => {
         return elem.nuclid === nuclid
       });
-      // console.log("++=== filteredClassNuclidTRO ===++");
+      // this.log("++=== filteredClassNuclidTRO ===++");
     },
 
     filteredClassGRO(nuclid, value) {
       return this.filteredClassNuclidGRO(nuclid)[0].ranges.filter((elem) => {
         return elem.begin < value && value <= elem.end
       });
-      // console.log("++=== filteredClassTRO ===++");
+      // this.log("++=== filteredClassTRO ===++");
     },
 
     filteredClassNuclidGRO(nuclid) {
@@ -641,7 +648,7 @@ export default {
       return this.classGRO.filter((elem) => {
         return elem.nuclid === nuclid
       });
-      // console.log("++=== filteredClassNuclidTRO ===++");
+      // this.log("++=== filteredClassNuclidTRO ===++");
     },		
   },
 
@@ -710,9 +717,9 @@ export default {
 
     section() {
       return this.ozri === 1 && this.codRAO[0].value === 2
-      ? 4
+      ? 4 // ОЗРИ
       : this.codRAO[6].value > 1 && this.codRAO[0].value === 2
-        ? 5
+        ? 5 // Твердые, переработанные
         : this.codRAO[0].value
     }
   },
