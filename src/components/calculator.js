@@ -137,6 +137,7 @@ export default {
     calcCodRAO() {
       this.log("--=== calcCodRAO ===--");
       let longlife = false
+			this.isRAO = false
       this.codRAO[5].value = 0;
         this.log(this.selectedNuclids),
 				this.selectedNuclids.forEach((elem, i) => {
