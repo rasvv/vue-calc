@@ -1,6 +1,16 @@
 <template>
   <v-card class="pa-4">
-    <v-row>
+    <v-row class="posparent">
+      <v-btn
+        class="mx-2 poschild"
+        fab
+        light
+        small
+        color="light-blue lighten-5"
+        @click="closeDialog"
+      >
+        <v-icon> mdi-close </v-icon>
+      </v-btn>
       <v-col cols="12" class="calc__types d-flex align-stretch">
         <v-container class="bordered">
           <v-row>
@@ -128,4 +138,18 @@ export default {
 
 .h1color
 	color: darkblue !important
+
+.v-btn:before
+	right: 0
+
+.posparent
+	position: relative
+	// width: 100%
+
+.poschild
+	// align-self: end
+	position: fixed
+	// left: 95%
+	right: -95%
+	// top: 10px
 </style>

@@ -330,7 +330,7 @@
             </div>
           </v-row>
         </v-container>
-        <v-row class="d-flex justify-center mt-6">
+        <!-- <v-row class="d-flex justify-center mt-6">
           <v-dialog
             v-model="showNuclidsTable"
             persistent
@@ -349,6 +349,29 @@
                 Рассчитать
               </v-btn>
             </template>
+            <Kod
+              :codRAO="codRAO"
+              :kodRAO="kodRAO"
+              :selectedNuclids="selectedNuclids"
+              v-on:close-dialog="closeDialog"
+            />
+          </v-dialog>
+        </v-row> -->
+        <v-row class="d-flex justify-center mt-6">
+          <v-btn
+            :disabled="!enabledBTN"
+            height="50px"
+            width="50%"
+            @click="calcCodRAO"
+          >
+            Рассчитать
+          </v-btn>
+          <v-dialog
+            v-model="showNuclidsTable"
+            persistent
+            transition="dialog-bottom-transition"
+            width="65vw"
+          >
             <Kod
               :codRAO="codRAO"
               :kodRAO="kodRAO"

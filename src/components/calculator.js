@@ -21,9 +21,10 @@ export default {
       showNuclidsTable: false,
       showlog: false,
       // longlife: false,
+			isRAO: false,
       codRAO: [],
       classRAO: [],
-      classTRO: 4,
+      classTRONum: 4,
       typeRAO: [],
       sostav: ["0", "0", "0"],             //[бета, альфа, трансурановые]
       dialog: false,
@@ -126,10 +127,10 @@ export default {
 
     getMOI(MOI) {
       this.log("getMOI(MOI).MOI = " + MOI)
-      +MOI && MOI != "NULL" && MOI != null && MOI != "-"
+      MOI && MOI != "NULL" && MOI != null && MOI != "-"
         ? MOI = +MOI
         : MOI = '-'
-      this.log("getMOI(MOI).+MOI =" + MOI)
+			this.log("getMOI(MOI).+MOI =" + MOI)
       return MOI
     },
 
@@ -137,7 +138,8 @@ export default {
       this.log("--=== calcCodRAO ===--");
       let longlife = false
       this.codRAO[5].value = 0;
-      this.selectedNuclids.forEach((elem, i) => {
+        this.log(this.selectedNuclids),
+				this.selectedNuclids.forEach((elem, i) => {
         if (!longlife) this.checkLongLife(elem) ? longlife = this.checkLongLife(elem) : longlife = false
         this.setNuclidSostav(elem)
         let pot = null
@@ -161,17 +163,20 @@ export default {
             this.setRAO_Potential(pot),
             this.addNuclidFields(elem, pot)
           )
-
+				if (elem.UdA < elem.PZUA) this.isRAO = true
         this.selectedNuclids.splice(i, 1, this.selectedNuclids[i]);        
       });
-
+			if (this.isRAO) {
+				alert('Удельная активность ниже ПЗУА. Не является РАО!')
+				return
+			}
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
       this.setSostav(this.sostav)
       this.kateg_RAO() 
       if (this.codRAO[0].value === 2) {
         this.checkClass_RAO() 
-          ? this.showNuclidsTable = false 
-          : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRO +'.')
+          ? this.showNuclidsTable = true 
+          : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRONum +'.')
       }
       this.log("++=== calcCodRAO ===++")
     },
@@ -332,11 +337,11 @@ export default {
         // if (shor < classTRO) classTRO = shor
       }
       // ar = this.calcCategory_RAO()
-      this.codRAO[4].value === 1 ? this.classTRO = long : this.classTRO = shor
+      this.codRAO[4].value === 1 ? this.classTRONum = long : this.classTRONum = shor
       this.log("this.codRAO[7].value = " + this.codRAO[7].value)
-      this.log("this.classTRO = " + this.classTRO)
+      this.log("this.classTRONum = " + this.classTRONum)
 
-      if (this.codRAO[7].value != 0 && this.codRAO[7].value != this.classTRO) {
+      if (this.codRAO[7].value != 0 && this.codRAO[7].value != this.classTRONum) {
         res = false
       } 
       this.log("res = " + res)
@@ -349,6 +354,7 @@ export default {
       let catt = 0
       for (let i = 0; i < 4; i++) {
         let val = this.UdAsSum[i][2]
+				this.log("val = " + val)
 
         switch (this.codRAO[0].value) {
           case 1: {
@@ -357,6 +363,10 @@ export default {
             break
           }
           case 2: {
+						this.log("i = " + i)
+						this.log("this.classTRO[i].nuclid = " + this.classTRO[i].nuclid)
+
+
             let nuc = this.classTRO[i].nuclid
             ar = this.filteredClassTRO(nuc, val)
             break
@@ -525,6 +535,7 @@ export default {
       this.codRAO[8].value = "**"
       this.selectedTypes = []
       this.desc = ""
+      this.isRAO = false
       this.sumAct = null
       this.mass = null
       this.obUdAct = null
