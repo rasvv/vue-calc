@@ -397,8 +397,9 @@ html
 
 .calc
 	&__form
-		min-height: 1020px
-		height: 95vh
+		min-height: 1050px
+		// height: 95vh
+		height: 100%
 		display: flex
 		justify-content: center
 

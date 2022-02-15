@@ -61,6 +61,13 @@
         </v-container>
       </v-col>
     </v-row>
+    <v-row v-if="isNine">
+      <v-col>
+        <h3 class="h3color" disabled="isNine">
+          * В Коде РАО имеется 9. Необходим комментарий к ячейке
+        </h3>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12" class="mt-2">
         <v-container class="bordered">
@@ -127,6 +134,20 @@ export default {
       this.$emit("close-dialog");
     },
   },
+  computed: {
+    isNine() {
+      let itNine = false;
+      this.codRAO.filter((elem, i) => {
+        if (i != 8) {
+          if (elem.value === 9) itNine = true;
+        } else {
+          if (elem.value.toString().length > 1)
+            if (elem.value.toString().substring(1, 2) === "9") itNine = true;
+        }
+      });
+      return itNine;
+    },
+  },
 };
 </script>
 
@@ -138,6 +159,9 @@ export default {
 
 .h1color
 	color: darkblue !important
+
+.h3color
+	color: red !important
 
 .v-btn:before
 	right: 0

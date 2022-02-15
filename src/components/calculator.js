@@ -21,7 +21,7 @@ export default {
       showNuclidsTable: false,
       showlog: false,
       // longlife: false,
-			isRAO: false,
+      isRAO: false,
       codRAO: [],
       classRAO: [],
       classTRONum: 4,
@@ -103,7 +103,11 @@ export default {
     },
 
     toExp(value) {
-      return value > 10000 ? value.toPrecision(3)	: value
+      this.log("toExp value = " + value)
+      // this.log("toExp typeof = " + typeof(value))
+      value = +value
+      if (typeof(value) === 'number')
+        return value > 10000 ? value.toExponential(2)	: value
     },
 
     addNuclidFields(selected, pot) {
@@ -111,7 +115,8 @@ export default {
       selected.Trans = this.isTrans(selected.Num_TM);
       selected.Period = `${this.toExp(selected.Period_p_r)} ${selected.Edinica_izmer_p_r}`
 
-      this.codRAO[0].value === 2 ? selected.PZUA = +selected.UdA_TRO : selected.PZUA = +selected.UdA_GRO
+      if (this.codRAO[0].value === 2) selected.PZUA = +selected.UdA_TRO
+      if (this.codRAO[0].value === 1) selected.PZUA = +selected.UdA_GRO
       selected.UdAUnit = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
         this.log("addNuclidFields: pot =" + pot)
@@ -130,17 +135,17 @@ export default {
       MOI && MOI != "NULL" && MOI != null && MOI != "-"
         ? MOI = +MOI
         : MOI = '-'
-			this.log("getMOI(MOI).+MOI =" + MOI)
+      this.log("getMOI(MOI).+MOI =" + MOI)
       return MOI
     },
 
     calcCodRAO() {
       this.log("--=== calcCodRAO ===--");
       let longlife = false
-			this.isRAO = false
+      this.isRAO = false
       this.codRAO[5].value = 0;
-        this.log(this.selectedNuclids),
-				this.selectedNuclids.forEach((elem, i) => {
+      this.log(this.selectedNuclids),
+        this.selectedNuclids.forEach((elem, i) => {
         if (!longlife) this.checkLongLife(elem) ? longlife = this.checkLongLife(elem) : longlife = false
         this.setNuclidSostav(elem)
         let pot = null
@@ -164,16 +169,17 @@ export default {
             this.setRAO_Potential(pot),
             this.addNuclidFields(elem, pot)
           )
-				if (elem.UdA < elem.PZUA) this.isRAO = true
+        if (elem.UdA < elem.PZUA) this.isRAO = true
         this.selectedNuclids.splice(i, 1, this.selectedNuclids[i]);        
       });
-			if (this.isRAO) {
-				alert('Удельная активность ниже ПЗУА. Не является РАО!')
-				return
-			}
+      if (this.isRAO) {
+        alert('Удельная активность ниже ПЗУА. Не является РАО!')
+        return
+      }
       longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2);
       this.setSostav(this.sostav)
       this.kateg_RAO() 
+      if (this.codRAO[0].value != 2) this.showNuclidsTable = true
       if (this.codRAO[0].value === 2) {
         this.checkClass_RAO() 
           ? this.showNuclidsTable = true 
@@ -232,15 +238,25 @@ export default {
     changeTypeRAO() {
       this.log("--=== changeTypeRAO ===--")
       this.log(this.selectedTypes);
-      this.desc = this.selectedTypes.description
-      this.codRAO[8].value = this.selectedTypes.cod
-      let items = {}
-      items.id = this.selectedTypes.cod
-      items.text = this.desc
-      if (this.codRAO[0].value === 1)
-        this.selectedTypes.cod === "94" ? this.codRAO[7].value = 5 : this.codRAO[7].value = 0
-      this.codRAO[8].radios.splice(0, 1, items)
-      this.log(this.codRAO[8].radios)
+      if (this.selectedTypes) {
+        // if (!this.checkEnabledItems(7)) this.codRAO[7].value = 0
+        this.desc = this.selectedTypes.description
+        this.codRAO[8].value = this.selectedTypes.cod
+        let items = {}
+        items.id = this.selectedTypes.cod
+        items.text = this.desc
+        // if (this.codRAO[0].value === 1)
+        if(this.selectedTypes.cod === "94") this.codRAO[7].value = 5
+        if (!this.checkEnabledItems(7)) this.codRAO[7].value = 0
+
+        this.codRAO[8].radios.splice(0, 1, items)
+        this.log(this.codRAO[8].radios)        
+      }
+      else
+      {
+        this.desc = ""
+        // this.selectedTypes.cod = "**"
+      }
       this.log("++=== changeTypeRAO ===++")
     },
 
@@ -264,9 +280,11 @@ export default {
       this.log("idx = " + idx)
       let vard = false
       this.codRAO[idx].radios.filter((elem) => {
-        if (!vard && elem.id === this.codRAO[idx].value && elem.enabled.includes(this.section))
+      if (!vard && elem.id === this.codRAO[idx].value && elem.enabled.includes(this.section))
           vard = true
       })
+      this.log("vard = " + vard)
+
       return vard
       // this.log("++=== setShowKod ===++")
     },
@@ -342,7 +360,7 @@ export default {
       this.log("this.codRAO[7].value = " + this.codRAO[7].value)
       this.log("this.classTRONum = " + this.classTRONum)
 
-      if (this.codRAO[7].value != 0 && this.codRAO[7].value != this.classTRONum) {
+      if (this.codRAO[7].value != 0 && this.codRAO[7].value != 9 && this.codRAO[7].value != this.classTRONum) {
         res = false
       } 
       this.log("res = " + res)
@@ -355,7 +373,7 @@ export default {
       let catt = 0
       for (let i = 0; i < 4; i++) {
         let val = this.UdAsSum[i][2]
-				this.log("val = " + val)
+        this.log("val = " + val)
 
         switch (this.codRAO[0].value) {
           case 1: {
@@ -364,8 +382,8 @@ export default {
             break
           }
           case 2: {
-						this.log("i = " + i)
-						this.log("this.classTRO[i].nuclid = " + this.classTRO[i].nuclid)
+            this.log("i = " + i)
+            this.log("this.classTRO[i].nuclid = " + this.classTRO[i].nuclid)
 
 
             let nuc = this.classTRO[i].nuclid
@@ -475,7 +493,7 @@ export default {
     },
 
     setRAO_Potential(pot) {
-      this.log("--=== setPotential ===--");
+      this.log("--=== setRAO_Potential ===--");
       this.log("pot = " + pot);
       if (!+pot) this.codRAO[5].value = 0
       if (pot > 0) {
@@ -488,7 +506,7 @@ export default {
         if (this.codRAO[5].value < 3) this.codRAO[5].value = 3;
       }
       this.log("this.codRAO[5].value = " + this.codRAO[5].value);
-      this.log("++=== setPotential ===++");
+      this.log("++=== setRAO_Potential ===++");
     },
 
     checkLongLife(elem) {
@@ -724,7 +742,7 @@ export default {
     },
 
     enabledBTN() {
-      return this.validNuclids && this.codRAO[8].value != "**";
+      return this.validNuclids && this.codRAO[8].value != "**" && this.desc != "";
     },
 
     section() {
