@@ -82,53 +82,41 @@ export default {
     },
 
     addNuclid() {
-      this.log("--=== addNuclid ===--");
       if (this.selectedNuclids.length === 0 || !this.checkExistsNuclid(this.selected.Name_RN)) {
         this.selectedNuclids.push(this.selected);
         this.isCorrect();				
       }
-      this.log("++=== addNuclid ===++");
     },
 
     delNuclid() {
-      this.log("--=== delNuclid ===--");
       this.selectedNuclids.splice(
         this.selectedNuclids.indexOf(this.selectedMin),
         1
       );
       this.isCorrect();
-      this.log("++=== delNuclid ===++");
     },
 
     toExp(value) {
-      this.log("toExp value = " + value)
       value = +value
       if (typeof(value) === 'number')
         return value > 10000 ? value.toExponential(2)	: value
     },
 
     addNuclidFields(selected, pot) {
-      this.log("--=== addNuclidFields ===--");
       selected.Trans = this.isTrans(selected.Num_TM);
       selected.Period = `${this.toExp(selected.Period_p_r)} ${selected.Edinica_izmer_p_r}`
       selected.UdAUnit = `${selected.UdA} Бк/г`;
       selected.Sostav = this.checkSostav(selected);
-      this.log("addNuclidFields: pot =" + pot)
       if (pot != "не определен") {
         selected.Udamza = selected.UdA / +selected.MOI
         selected.Potential = `${this.toExp(pot)} лет`
       } else selected.Potential = "не определен"
- 
-      this.log("++=== addNuclidFields ===++");
-      this.log("selected.PZUA = " + selected.PZUA)
     },
 
     getMOI(MOI) {
-      this.log("getMOI(MOI).MOI = " + MOI)
       MOI && MOI != "NULL" && MOI != null && MOI != "-"
         ? MOI = +MOI
         : MOI = '-'
-      this.log("getMOI(MOI).+MOI =" + MOI)
       return MOI
     },
 
@@ -149,33 +137,23 @@ export default {
     },
 
     calcCodRAO() {
-      this.log("--=== calcCodRAO ===--");
       let longlife = false
       this.codRAO[5].value = 0;
-      this.log(this.selectedNuclids),
         this.selectedNuclids.forEach((elem, i) => {
         if (!longlife) this.checkLongLife(elem) ? longlife = this.checkLongLife(elem) : longlife = false
         this.setNuclidSostav(elem)
         let pot = null
-        this.log("Before getMOI(MOI) elem.MOI =" + elem.MOI)
         elem.MOI = this.getMOI(elem.MOI) 
-        this.log("elem.MOI =" + elem.MOI)
-
-
   
         elem.MOI === '-' 
           ? (
             pot = 'не определен',
             elem.Potential = 'не определен',
-            this.log("Pot не определен"),
             elem.Udamza = 0,
-            // this.codRAO[5].value = 0,
-            // this.setRAO_Potential(pot),
             elem.PZUA = this.checkPotential(elem), 
             this.addNuclidFields(elem, pot)
           )
           : (
-            this.log("Pot определен"),
             pot = this.calcPotential(elem),
             elem.PZUA = this.checkPotential(elem),
             elem.PZUA === '-' ? pot = 'не определен' : this.setRAO_Potential(pot),
@@ -199,7 +177,6 @@ export default {
             : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRONum +'.')
         }
       }
-       this.log("++=== calcCodRAO ===++")				
     },
 
     calcPercentsSum() {
@@ -209,43 +186,31 @@ export default {
     },
 
     checkPercents() {
-      this.log("--=== checkPercents ===--");
       if (this.selectedNuclids.length === 0) return false;
       if (this.calcPercentsSum() > 100) {
         alert("Сумма значений процентов не может превышать 100!")
         return false
       }
-      this.log("++=== checkPercents ===++");
       return true
     },
     
     isNotRAO() {
-      this.log("--=== isNotRAO ===--");
       let rao = 0
       let res = true
-      this.log("this.selectedNuclids.length = " + this.selectedNuclids.length)
       if (this.selectedNuclids.length === 1) {
-        this.log("this.selectedNuclids[0].UdA = " + this.selectedNuclids[0].UdA)
-        this.log("this.selectedNuclids[0].PZUA = " + this.selectedNuclids[0].PZUA)
         this.selectedNuclids[0].PZUA != '-'
           ? this.selectedNuclids[0].UdA > this.selectedNuclids[0].PZUA 
-            ? (res = false, 
-              this.log("res = false"))
-            : (res = true, 
-              this.log("res = true"))
+            ? res = false
+            : res = true
           : res = false 
           }	
         else 
       {
         this.selectedNuclids.forEach((elem) => {
-          this.log("elem.UdA = " + elem.UdA)
-          this.log("elem.PZUA = " + elem.PZUA)
           if (+elem.PZUA > 0) {
             rao += +elem.UdA / +elem.PZUA
-            this.log("forEach rao = " + rao)
           }
         })
-        this.log("rao = " + rao)
         rao > 1 ? res = false : res = true
       }
       return res
@@ -256,13 +221,11 @@ export default {
       if (this.showUda != 0) {
         if (!this.checkPercents()) return this.validNuclids = false
         if (this.selectedNuclids.length === 0) return false
-        this.log(this.selectedNuclids)
       }
       this.selectedNuclids.forEach((elem) => {
         if (this.showUda === 0) {
           if (elem.UdA) elem.UdA = this.toExp(this.replaceExponent(elem.UdA))
           this.UdAKey += 1
-          this.log(elem.UdA);					
         }
         if (!elem.UdA || elem.UdA <= 0 || elem.UdA == undefined) per = true;
       });
@@ -271,18 +234,13 @@ export default {
     },
 
     recalcUdA(elem) {
-      this.log("--=== recalcUdA ===--");
       if (this.showUda === 2) {this.obUdAct = this.toExp((+this.sumAct / (+this.mass * +this.selectedMass)))}
-
       elem.UdA = this.toExp(this.obUdAct * elem.Percent / 100)
       if (+elem.UdA <= 0) elem.UdA = 0
       this.UdAKey += 1
-      this.log("++=== recalcUdA ===++");
     },
 
     changeTypeRAO() {
-      this.log("--=== changeTypeRAO ===--")
-      this.log(this.selectedTypes);
       if (this.selectedTypes) {
         this.desc = this.selectedTypes.description
         this.codRAO[8].value = this.selectedTypes.cod
@@ -291,47 +249,34 @@ export default {
         items.text = this.desc
         if(this.selectedTypes.cod === "94") this.codRAO[7].value = 5
         if (!this.checkEnabledItems(7)) this.codRAO[7].value = 0
-
         this.codRAO[8].radios.splice(0, 1, items)
-        this.log(this.codRAO[8].radios)        
       }
       else
       {
         this.desc = ""
       }
-      this.log("++=== changeTypeRAO ===++")
     },
 
     setOZRI() {
-      this.log("--=== setOZRI ===--")
       this.ozri === 1 
       ? this.codRAO[1].value = 4 
       : this.codRAO[1].value = 0
-      this.log("++=== setOZRI ===++")
     },
 
     setShowKod() {
-      this.log("--=== setShowKod ===--")
       this.$emit((this.showKod = false))
-      this.log(this.showKod)
-      this.log("++=== setShowKod ===++")
     },
 
     checkEnabledItems(idx) {
-      this.log("--=== checkEnabledItems ===--")
-      this.log("idx = " + idx)
       let vard = false
       this.codRAO[idx].radios.filter((elem) => {
       if (!vard && elem.id === this.codRAO[idx].value && elem.enabled.includes(this.section))
           vard = true
       })
-      this.log("vard = " + vard)
-
       return vard
     },
 
     changeValue() {
-      this.log("--=== changeValue ===--")
       if (this.oldAgregate != this.codRAO[0].value) {
         this.oldAgregate = this.codRAO[0].value
         this.desc = ""
@@ -340,7 +285,6 @@ export default {
         if (!this.checkEnabledItems(6)) this.codRAO[6].value = 0
         if (!this.checkEnabledItems(7)) this.codRAO[7].value = 0
       }
-      this.log("++=== changeValue ===++")
     },
 
     per_pr_min(perVal, per) {
@@ -382,25 +326,17 @@ export default {
       for (let i = 0; i < 4; i++) {
         let val = this.UdAsSum[i][2]
         let nuc = this.classTRO[i].nuclid
-        this.log("nuc = " + nuc)
-        this.log("val = " + val)
         ar = this.filteredClassTRO(nuc, val)
         if (ar.length > 0) {
-        this.log("+ar[0].long = " + +ar[0].long)
-        this.log("+ar[0].short = " + +ar[0].short)
 
           if (long > +ar[0].long) long = +ar[0].long
           if (shor > +ar[0].short) shor = +ar[0].short
         }
       }
       this.codRAO[4].value === 1 ? this.classTRONum = long : this.classTRONum = shor
-      this.log("this.codRAO[7].value = " + this.codRAO[7].value)
-      this.log("this.classTRONum = " + this.classTRONum)
-
       if (this.codRAO[7].value != 0 && this.codRAO[7].value != 9 && this.codRAO[7].value != this.classTRONum) {
         res = false
       } 
-      this.log("res = " + res)
       return res
     },
 
@@ -410,8 +346,6 @@ export default {
       let catt = 0
       for (let i = 0; i < 4; i++) {
         let val = this.UdAsSum[i][2]
-        this.log("val = " + val)
-
         switch (this.codRAO[0].value) {
           case 1: {
             let nuc = this.classGRO[i].nuclid
@@ -419,10 +353,6 @@ export default {
             break
           }
           case 2: {
-            this.log("i = " + i)
-            this.log("this.classTRO[i].nuclid = " + this.classTRO[i].nuclid)
-
-
             let nuc = this.classTRO[i].nuclid
             ar = this.filteredClassTRO(nuc, val)
             break
@@ -437,7 +367,6 @@ export default {
     },
 
     kateg_RAO() {
-      this.log("--=== kateg_RAO ===--");
       if (this.ozri === 1 && this.codRAO[0].value === 2) return 4
       this.codRAO[1].value = 0;
 
@@ -445,8 +374,6 @@ export default {
       this.codRAO[1].value = 9
       else 
       this.selectedNuclids.forEach((elem) => {
-        this.log("kateg_RAO() elem.Sostav = " + elem.Sostav);
-
         switch (elem.Sostav){
           case "тритий": {
             this.checkLongLife(elem) ? this.UdAsSum[0][0] += +elem.UdA : this.UdAsSum[0][1] += +elem.UdA
@@ -469,11 +396,8 @@ export default {
             break
           }
         }
-
         this.calcCategory_RAO()
       });
-      this.log(this.UdAsSum)
-      this.log("++=== kateg_RAO ===++");
     },
 
     checkSostav(selected) {
@@ -484,8 +408,6 @@ export default {
     },
 
     setSostav(sostav) {
-      this.log("--=== setSostav ===--");
-      this.log(sostav);
       if (sostav[0] === "1" && sostav[1] === "0" && sostav[2] === "0")
         this.codRAO[2].value = 4;
       if (sostav[0] === "1" && sostav[1] === "1" && sostav[2] === "0")
@@ -500,8 +422,6 @@ export default {
         this.codRAO[2].value = 6;
       if (sostav[0] === "0" && sostav[1] === "0" && sostav[2] === "1")
         this.codRAO[2].value = 1;
-        this.log("this.codRAO[2].value =" + this.codRAO[2].value);        
-      this.log("++=== setSostav ===++");
       return this.codRAO[2].value
     },
 
@@ -510,11 +430,9 @@ export default {
     },
 
     calcPotential(selected) {
-      this.log("--=== calcPotential ===--");
       let pot = 'не определен' 
       if (selected.MOI != "-") {
         let udal = +selected.MOI
-        this.log("udal = " + udal);
         if (this.codRAO[0].value === 1) {
           // udal = udal * selected.UdA_GRO
           udal = 0.1 * selected.UdA_GRO
@@ -523,17 +441,11 @@ export default {
         pot = (1.44 * Math.log(selected.UdA / udal) * per).toFixed(1)
 
         if (pot < 0) pot = 0
-        this.log(selected.Name_RN + " = " + pot)
       }
-
-      this.log("++=== calcPotential ===++");        
-
       return pot
     },
 
     setRAO_Potential(pot) {
-      this.log("--=== setRAO_Potential ===--");
-      this.log("pot = " + pot);
       if (!+pot) this.codRAO[5].value = 0
       if (pot > 0) {
         if (this.codRAO[5].value < 1) this.codRAO[5].value = 1;
@@ -544,8 +456,6 @@ export default {
       if (pot > 500) {
         if (this.codRAO[5].value < 3) this.codRAO[5].value = 3;
       }
-      this.log("this.codRAO[5].value = " + this.codRAO[5].value);
-      this.log("++=== setRAO_Potential ===++");
     },
 
     checkLongLife(elem) {
@@ -556,33 +466,26 @@ export default {
       switch (this.checkSostav(elem)) {
         case "тритий":
           this.sostav[0] = "1";
-          this.log("Sostav[0] = 1");
           break;
         case "бета":
           this.sostav[0] = "1";
-          this.log("Sostav[0] = 1");
           break;
         case "альфа":
           this.sostav[1] = "1";
-          this.log("Sostav[1] = 1");
           break;
         case "трансурановые":
           this.sostav[2] = "1";
-          this.log("Sostav[2] = 1");
           break;
       }      
     },
 
     reloadVar() {
-      this.log("--=== reloadVar ===--")
       this.selectedNuclids.forEach((elem) => {
          elem.Percent = null
          elem.UdA = null
       })
       this.selectedNuclids.splice(0, this.selectedNuclids.length + 1, {})
       this.selectedNuclids = []
-      this.log("this.selectedNuclids")
-      this.log(this.selectedNuclids)
       this.selected = {}
       this.codRAO = []
       this.codRAO = require("@/db/codRAO.json")
@@ -596,45 +499,36 @@ export default {
       this.mass = null
       this.obUdAct = null
       this.sostav = ["0", "0", "0"]
-      this.log("++=== reloadVar ===++")
     },
 
     closeDialog() {
-      this.log("--=== closeDialog ===--")
       this.showNuclidsTable = false
       this.reloadVar()
-      this.log("++=== closeDialog ===++")
     },
 
     replaceExponent(value) {
-      this.log("--=== replaceExponent ===--")
-      this.log("value1 = " + value)
       if (!value || value == undefined) return ""
-      this.log("value2 = " + value)
+			if (value < 0) {
+				alert ("Значение не может быть отрицательным")
+				return ""
+			}
       if (value && +value) return +value
-      this.log("value3 = " + value)
       value = value.toString()
       value = value.replace(",", ".")
       if (value.indexOf("e+") === -1) value = value.replace("+", "e+")
       if (value.indexOf("e+") === -1) value = value.replace("е", "e")
       if (value.indexOf("e-") === -1) value = value.replace("-", "e-")
       if (value.indexOf("e-") === -1) value = value.replace("е", "e")
-      this.log("sumAct = " + value)
-      this.log("++=== replaceExponent ===++")
       if (+value <= 0) return 0
       else return +value
     },
 
     recalcSumActFilter() {
-      this.log("--=== recalcSumActFilter ===--")
       if (this.showUda === 2) this.sumAct = this.toExp(this.replaceExponent(this.sumAct))
-      this.log("++=== recalcSumActFilter ===++")
     },
 
     recalcObUdActFilter() {
-      this.log("--=== recalcObUdActFilter ===--")
       this.obUdAct = this.toExp(this.replaceExponent(this.obUdAct))
-      this.log("++=== recalcObUdActFilter ===++")
     },
 
     recalcUdActFilter(value) {
@@ -658,22 +552,15 @@ export default {
     },
 
     onDragStart(i) {
-      this.log("--=== onDragStart ===--")
       this.selected = this.filteredNuclids[i]
-      this.log("selected = " + this.selected.Name_RN)
-      this.log("++=== onDragStart ===++")
     },
 
     onDrop() {
-      this.log("--=== onDrop ===--")
       this.addNuclid()
-      this.log("++=== onDrop ===++")
     },
 
     checkFilter(filter) {
-      this.log("this.filter1 = " + this.filter);
       if (filter === null) return true
-      this.log("this.filter2 = " + this.filter);
       if (filter == "" || !filter) return true
       return false
     },
@@ -686,38 +573,30 @@ export default {
       return this.filteredClassNuclidTRO(nuclid)[0].ranges.filter((elem) => {
         return elem.begin < value && value <= elem.end
       });
-      // this.log("++=== filteredClassTRO ===++");
     },
 
     filteredClassNuclidTRO(nuclid) {
-      this.log("--=== filteredClassNuclidTRO ===--");
       return this.classTRO.filter((elem) => {
         return elem.nuclid === nuclid
       });
-      // this.log("++=== filteredClassNuclidTRO ===++");
     },
 
     filteredClassGRO(nuclid, value) {
       return this.filteredClassNuclidGRO(nuclid)[0].ranges.filter((elem) => {
         return elem.begin < value && value <= elem.end
       });
-      // this.log("++=== filteredClassTRO ===++");
     },
 
     filteredClassNuclidGRO(nuclid) {
-      this.log("--=== filteredClassNuclidGRO ===--");
       return this.classGRO.filter((elem) => {
         return elem.nuclid === nuclid
       });
-      // this.log("++=== filteredClassNuclidTRO ===++");
-    },		
+    },
+
     saveFile() {
-      this.log("--=== saveFile ===--");
       const data = JSON.stringify(this.codRAO)
-      this.log(data);
       const blob = new Blob([data], {type: 'application/json'})
       FileSaver.saveAs(blob, `File name.json`)
-      this.log("++=== saveFile ===++");
     },
   },
 
@@ -728,10 +607,10 @@ export default {
     this.classTRO = require("@/db/classTRO.json")
     this.classGRO = require("@/db/classGRO.json")
   },
+
   computed: {
     filteredNuclids() {
       if (this.filter === null) this.filter = ""
-
       if (this.favoriteNuclids === 1)
       return this.nuclids.filter((elem) => {
         return ((this.filter == "" || !this.filter) && elem.favorite === this.favoriteNuclids) 
@@ -770,7 +649,6 @@ export default {
       this.codRAO.forEach((elem) => {
         cod = cod.toString() + elem.value;
       });
-      this.log(cod);
       return cod;
     },
 

@@ -123,7 +123,7 @@
                 </v-radio-group>
                 <v-text-field
                   class="d-flex align-end flex-column"
-                  label="Фильтр"
+                  label="Поиск"
                   hide-details="auto"
                   clearable
                   v-model="filter"
@@ -203,6 +203,7 @@
                       @change="recalcUdANuclids"
                       clearable
                       v-model="mass"
+                      :rules="[rules.percentPlus]"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="3" class="pb-0">
