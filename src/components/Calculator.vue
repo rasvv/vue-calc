@@ -137,11 +137,11 @@
                     :value="0"
                     class="calc__item"
                   ></v-radio>
-                  <v-radio
+                  <!-- <v-radio
                     label="Общая удельная активность + %"
                     :value="1"
                     class="calc__item"
-                  ></v-radio>
+                  ></v-radio> -->
                   <v-radio
                     label="Суммарная активность + масса + %"
                     :value="2"

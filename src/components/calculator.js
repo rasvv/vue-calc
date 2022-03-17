@@ -161,20 +161,36 @@ export default {
           )
         this.selectedNuclids.splice(i, 1, this.selectedNuclids[i]);        
       })
-      if (this.isNotRAO())
-      {
-        alert('Удельная активность ниже ПЗУА. Не является РАО!')
+      if (this.codRAO[7].value != 6) {
+        if (this.isNotRAO())
+        {
+          alert('Удельная активность ниже ПЗУА. Не является РАО!')
+        } 
+        else
+        {
+          longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2)
+          this.setSostav(this.sostav)
+          this.kateg_RAO()
+          if (this.codRAO[0].value != 2) {this.showNuclidsTable = true}
+          if (this.codRAO[0].value === 2) {
+            this.checkClass_RAO()
+              ? this.showNuclidsTable = true
+              : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRONum +'.')
+          }
+        }
       } 
       else
       {
-        longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2)
-        this.setSostav(this.sostav)
-        this.kateg_RAO()
-        if (this.codRAO[0].value != 2) {this.showNuclidsTable = true}
-        if (this.codRAO[0].value === 2) {
-          this.checkClass_RAO()
-            ? this.showNuclidsTable = true
-            : alert('Установленный класс РАО не соответствует расчетному. Может принимать значения: 0, '+ this.classTRONum +'.')
+        if (this.isNotRAO_notAE())
+        {
+          alert('Сумма удельных активностей нуклидов ниже значения критерия. Не является РАО!')
+        } 
+        else
+        {
+          longlife ? (this.codRAO[4].value = 1) : (this.codRAO[4].value = 2)
+          this.setSostav(this.sostav)
+          this.kateg_RAO()
+          this.showNuclidsTable = true
         }
       }
     },
@@ -216,6 +232,37 @@ export default {
       return res
     },
 
+    isNotRAO_notAE() {
+      let res = true
+      let rao = 0, valRa = 0, valTh = 0, valK = 0, valU = 0
+
+      this.selectedNuclids.forEach((elem) => {
+        switch (elem.Name_RN_Lat) {
+          case "Ra-226":
+            valRa = elem.UdA
+            break;
+          case "U-238":
+            valU = elem.UdA
+            break;
+          case "K-40":
+            valK = elem.UdA
+            break;
+          case "Th-232":
+            valTh = elem.UdA
+            break;
+        }
+      })
+      if (this.codRAO[0].value === 2){
+        rao = valRa + valTh * 1.3 + valK * 0.09
+        rao > 10 ? res = false : res = true
+      }
+      if (this.codRAO[0].value === 1){
+        rao = valTh * 2.14 + valU
+        rao > 0.13 ? res = false : res = true
+      }
+      return res
+    },
+    
     isCorrect() {
       let per = false;
       if (this.showUda != 0) {
@@ -493,6 +540,7 @@ export default {
       //[тритий:[долго, коротко, сумма], бета[...], альфа[...], транс[...]]
 
       this.codRAO[8].value = "**"
+      this.codRAO[7].value = 0
       this.selectedTypes = []
       this.desc = ""
       this.sumAct = null
@@ -508,10 +556,10 @@ export default {
 
     replaceExponent(value) {
       if (!value || value == undefined) return ""
-			if (value < 0) {
-				alert ("Значение не может быть отрицательным")
-				return ""
-			}
+      if (value < 0) {
+        alert ("Значение не может быть отрицательным")
+        return ""
+      }
       if (value && +value) return +value
       value = value.toString()
       value = value.replace(",", ".")
@@ -611,6 +659,11 @@ export default {
   computed: {
     filteredNuclids() {
       if (this.filter === null) this.filter = ""
+      if (this.codRAO[7].value === 6) {
+        return this.nuclids.filter((elem) => {
+          return elem.not_ae && elem.not_ae.includes(this.codRAO[0].value)
+        });
+      }
       if (this.favoriteNuclids === 1)
       return this.nuclids.filter((elem) => {
         return ((this.filter == "" || !this.filter) && elem.favorite === this.favoriteNuclids) 

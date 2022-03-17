@@ -206,7 +206,8 @@
 		"ObA_GaRO": 31,
 		"MOI": "NULL",
 		"D_val": -1,
-		"favorite": 0
+		"favorite": 0,
+		"not_ae": [2]
 	},
 	{
 		"Name_RN": "калий-42",
@@ -2785,7 +2786,8 @@
 		"ObA_GaRO": "0.0049",
 		"MOI": "NULL",
 		"D_val": -1,
-		"favorite": 1
+		"favorite": 1,
+		"not_ae": [1, 2]
 	},
 	{
 		"Name_RN": "торий-234",
@@ -3415,7 +3417,8 @@
 		"ObA_GaRO": "0.03",
 		"MOI": "NULL",
 		"D_val": "0.04",
-		"favorite": 0
+		"favorite": 0,
+		"not_ae": [2]
 	},
 	{
 		"Name_RN": "радий-228",
@@ -3534,7 +3537,8 @@
 		"ObA_GaRO": "0.041",
 		"MOI": "NULL",
 		"D_val": -1,
-		"favorite": 1
+		"favorite": 1,
+		"not_ae": [1]
 	},
 	{
 		"Name_RN": "плутоний-244",
