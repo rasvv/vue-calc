@@ -1,11 +1,13 @@
 <template>
-  <v-container :class="wrap ? 'd-flex; justify-column' : ''">
-    {{ codRAO[idx].description }}
+  <fieldset :class="wrap ? 'd-flex; justify-column' : ''">
+		<legend>
+			{{ codRAO[idx].description }}
+		</legend>	
     <v-radio-group
       v-model="codRAO[idx].value"
       :row="row"
       :column="!row"
-      class="calc__items pt-4"
+      class="calc__items py-0 my-n2"
       :class="wrap ? 'ml-5' : ''"
       @change="changeValue"
     >
@@ -18,7 +20,7 @@
         class="calc__item"
       ></v-radio>
     </v-radio-group>
-  </v-container>
+  </fieldset>
 </template>
 
 <script>

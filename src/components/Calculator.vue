@@ -17,19 +17,25 @@
 
         <v-row class="">
           <v-col cols="4" class="calc__types d-flex align-stretch">
-            <v-container class="bordered">
+            <fieldset class="bordered">
+              <legend>
+                ОЗРИ?
+              </legend>
+                <v-radio-group
+                  v-model="ozri"
+                  column
+                  :disabled="codRAO[0].value != 2"
+                  class="calc__items py-0"
+                  @change="setOZRI"
+                >
+                  <v-radio label="Да" :value="1" class="calc__item"></v-radio>
+                  <v-radio label="Нет" :value="2" class="calc__item"></v-radio>
+                </v-radio-group>							
+            </fieldset>
+            <!-- <v-container class="bordered">
               ОЗРИ?
-              <v-radio-group
-                v-model="ozri"
-                column
-                :disabled="codRAO[0].value != 2"
-                class="calc__items pt-4"
-                @change="setOZRI"
-              >
-                <v-radio label="Да" :value="1" class="calc__item"></v-radio>
-                <v-radio label="Нет" :value="2" class="calc__item"></v-radio>
-              </v-radio-group>
-            </v-container>
+
+            </v-container> -->
           </v-col>
           <v-col cols="8" class="calc__types d-flex align-stretch">
             <!-- Содержание ядерных материалов -->
@@ -65,10 +71,11 @@
 
         <v-row>
           <v-col cols="12" class="calc__types d-flex align-stretch">
-            <v-container class="bordered">
-              <!-- Тип РАО -->
-              9-10. Тип РАО
-
+            <fieldset class="bordered">
+              <legend>
+                9-10. Тип РАО
+              </legend>	
+                  <!-- Тип РАО -->
               <v-combobox
                 v-model="selectedTypes"
                 :items="filteredTypeRAO"
@@ -83,7 +90,7 @@
               </v-combobox>
 
               {{ desc }}
-            </v-container>
+            </fieldset>
           </v-col>
         </v-row>
 
@@ -100,8 +107,10 @@
         </v-row>
       </v-col>
       <v-col cols="7" class="mt-n2">
-        <v-container class="bordered">
-          <h2>Радионуклидный состав</h2>
+        <fieldset class="bordered">
+          <legend>
+            Радионуклидный состав
+          </legend>	          
           <v-row width="100%">
             <div class="nuclids__top">
               <v-col
@@ -122,7 +131,7 @@
                   ></v-radio>
                 </v-radio-group>
                 <v-text-field
-                  class="d-flex align-end flex-column"
+                  class="d-flex align-end flex-column input"
                   label="Поиск"
                   hide-details="auto"
                   clearable
@@ -330,7 +339,7 @@
               </v-col>
             </div>
           </v-row>
-        </v-container>
+        </fieldset>
         <!-- <v-row class="d-flex justify-center mt-6">
           <v-dialog
             v-model="showNuclidsTable"
@@ -358,6 +367,10 @@
             />
           </v-dialog>
         </v-row> -->
+
+      </v-col>
+      <div></div>
+    </v-row>
         <v-row class="d-flex justify-center mt-6">
           <v-btn
             :disabled="!enabledBTN"
@@ -380,10 +393,7 @@
               v-on:close-dialog="closeDialog"
             />
           </v-dialog>
-        </v-row>
-      </v-col>
-      <div></div>
-    </v-row>
+        </v-row>    
   </v-container>
 </template>
 
@@ -391,95 +401,5 @@
 
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
-html
-	box-sizing: border-box
-	margin: 0
-	padding: 0
 
-.calc
-	&__form
-		min-height: 1050px
-		// height: 95vh
-		height: 100%
-		display: flex
-		justify-content: center
-
-	&__types
-		padding: 5px
-
-	&__item
-		display: inline-block
-
-	&__items
-		width: 100%
-		display: flex
-		justify-content: space-around
-		display: block
-		gap: 30px
-
-	&__nuclids
-		width: 100%
-
-		&-card
-			border-bottom: 1px solid #ccc
-			width: 100%
-			padding: 8px
-			justify-content: start
-
-.v-btn:not(.v-btn--round).v-size--default
-	width: 100%
-	min-width: 0
-	padding: 0
-	margin-bottom: 10px
-
-.bordered
-	margin: 0
-	width: 100%
-	border: 1px solid lightblue
-
-.borred
-	height: 97vh
-
-.buttons
-	padding: 0
-	gap: 30px
-	width: 100%
-	display: flex
-	flex-direction: column
-	justify-content: center
-	align-items: center
-
-.gap
-	gap: 10px
-
-.left
-	overflow-y: scroll
-	height: 40vh
-
-.right
-	overflow-y: scroll
-	height: listHeight
-
-.h100
-	height: 100vh
-
-.nuclids__top
-	width: 100%
-	display: flex
-	justify-content: space-between
-
-	&-left
-		display: flex
-		flex-direction: column
-		justify-content: space-between
-
-.nuclids__bottom
-	width: 100%
-	display: flex
-	justify-content: space-between
-
-// .v-text-field fieldset, .v-text-field .v-input__control
-// 	display: flex
-// 	flex-direction: column
-// 	justify-content: flex-end !important
 </style>

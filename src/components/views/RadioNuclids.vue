@@ -45,6 +45,5 @@ export default {
 </script>
 
 <style lang="sass">
-.lineheight
-	padding: 2px 8px
+
 </style>
