@@ -1,6 +1,7 @@
 module.exports = {
-  transpileDependencies: [
-    'vuetify'
-  ],
-  publicPath: '/vue-calc/'
+	transpileDependencies: [
+		'vuetify'
+	],
+	publicPath: process.env.NODE_ENV === 'production' ? '/vue-calc/' : '/'
+	// publicPath: '/vue-mySite/'
 }
