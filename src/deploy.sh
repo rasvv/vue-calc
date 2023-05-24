@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
 npm run build
-# cd dist
+cd dist
 git add dist
 git commit -m 'deploy'
-git subtree push --prefix dist origin gh-pages
-
+#git subtree push --prefix dist origin gh-pages
+git push -f git@github.com:rasvv.github.io/vue-calc.git master:gh-pages
 # остановить публикацию при ошибках
 # set -e
 
