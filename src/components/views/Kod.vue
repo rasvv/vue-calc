@@ -1,28 +1,31 @@
 <template>
   <v-card class="pa-4">
     <v-row class="posparent">
-      <v-btn
-        class="mx-2 poschild"
-        fab
-        light
-        small
-        color="light-blue lighten-5"
-        @click="closeDialog"
-      >
-        <v-icon> mdi-close </v-icon>
-      </v-btn>
       <v-col cols="12" class="calc__types d-flex align-stretch">
         <v-container class="bordered">
           <v-row>
-            <v-col cols="6" class="d-flex flex-column align-center">
+            <v-col cols="4" class="d-flex flex-column align-center">
               Код РАО
               <h1 class="h1color">
                 {{ kodRAO }}
               </h1>
             </v-col>
-            <v-col cols="6" class="d-flex justify-center align-center">
+            <v-col cols="4" class="d-flex justify-center align-center">
               <v-btn width="60%" @click="copyToClipboard">
                 Скопировать код
+              </v-btn>
+            </v-col>
+            <v-col cols="4" class="d-flex justify-end align-top">
+              <!-- <v-btn width="60%" @click="closeDialog"> Новый расчет </v-btn> -->
+
+              <v-btn
+                fab
+                light
+                small
+                color="light-blue lighten-5"
+                @click="closeDialog"
+              >
+                <v-icon> mdi-close </v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -30,23 +33,23 @@
             <v-list-item-group class="bordered py-3">
               <v-list-item-title flat>
                 <v-row>
-                  <v-col cols="4" class="pl-7">№ символа</v-col>
+                  <v-col cols="3" class="pl-7">№ символа</v-col>
                   <v-col cols="2">Идентификатор</v-col>
-                  <v-col cols="6">Значение</v-col>
+                  <v-col cols="7">Значение</v-col>
                 </v-row>
               </v-list-item-title>
               <v-list-item v-for="(item, i) in codRAO" :key="i" flat tile>
                 <v-card width="100%">
                   <v-row>
-                    <v-col cols="4" class="pa-5">
+                    <v-col cols="4" class="pa-4">
                       {{ codRAO[i].description }}
                     </v-col>
-                    <v-col cols="2" class="pa-5">
+                    <v-col cols="1" class="pa-4">
                       <h3 class="h1color">
                         {{ codRAO[i].value }}
                       </h3>
                     </v-col>
-                    <v-col cols="6" class="pa-5">
+                    <v-col cols="7" class="pa-4">
                       {{
                         codRAO[i].value === "*"
                           ? codRAO[i].value
@@ -61,15 +64,15 @@
         </v-container>
       </v-col>
     </v-row>
-    <v-row v-if="isNine">
-      <v-col>
+    <v-row v-if="isNine" class="posparent">
+      <v-col class="calc__types d-flex align-stretch">
         <h3 class="h3color" disabled="isNine">
-          * В Коде РАО имеется 9. Необходим комментарий к ячейке
+          * В Коде РАО имеется значение = 9. Необходим комментарий к ячейке
         </h3>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" class="mt-2">
+    <v-row class="posparent">
+      <v-col cols="12" class="calc__types d-flex align-stretch">
         <v-container class="bordered">
           <h2>Радионуклидный состав</h2>
           <v-row class="nuclidstable">
@@ -77,19 +80,19 @@
               class="bordered ma-2 mt-4"
               :headers="headers"
               :items="selectedNuclids"
-              :hide-default-footer="selectedNuclids.length < 5"
+              hide-default-footer="true"
             ></v-data-table>
           </v-row>
         </v-container>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="12" class="calc__types d-flex align-stretch">
         <v-container class="d-flex justify-center">
           <v-btn width="40%" @click="closeDialog"> Новый расчет </v-btn>
         </v-container>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-card>
 </template>
 
@@ -151,11 +154,7 @@ export default {
 };
 </script>
 
-<style lang='sass'>
-.bordered
-	margin: 0
-	width: 100%
-	border: 1px solid lightblue
+<style lang="sass">
 
 .h1color
 	color: darkblue !important
@@ -165,15 +164,4 @@ export default {
 
 .v-btn:before
 	right: 0
-
-.posparent
-	position: relative
-	// width: 100%
-
-.poschild
-	// align-self: end
-	position: fixed
-	// left: 95%
-	right: -95%
-	// top: 10px
 </style>

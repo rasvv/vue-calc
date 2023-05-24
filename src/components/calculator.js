@@ -66,7 +66,7 @@ export default {
   components: {
     Radios,
     RadioNuclids,
-    Kod,
+    Kod
   },
   methods: {
     copyToClipboard() {
@@ -687,6 +687,7 @@ export default {
 
     filteredTypeRAO() {
       return this.typeRAO.filter((elem) => {
+				elem.descript = elem.cod + ' - ' + elem.description
         return elem.section.includes(this.section)
       });
     },

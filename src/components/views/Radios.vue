@@ -1,8 +1,8 @@
 <template>
   <fieldset :class="wrap ? 'd-flex; justify-column' : ''">
-		<legend>
-			{{ codRAO[idx].description }}
-		</legend>	
+    <legend>
+      {{ codRAO[idx].description }}
+    </legend>
     <v-radio-group
       v-model="codRAO[idx].value"
       :row="row"
@@ -15,7 +15,7 @@
         v-for="(item, i) in codRAO[idx].radios"
         :key="i"
         :disabled="!disabled(item, enabled)"
-        :label="item.text"
+        :label="item.id + ' - ' + item.text"
         :value="item.id"
         class="calc__item"
       ></v-radio>
@@ -36,5 +36,4 @@ export default {
   },
 };
 </script>
-<style lang="sass">
-</style>
+<style lang="sass"></style>

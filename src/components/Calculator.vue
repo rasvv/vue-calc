@@ -18,19 +18,17 @@
         <v-row class="">
           <v-col cols="4" class="calc__types d-flex align-stretch">
             <fieldset class="bordered">
-              <legend>
-                ОЗРИ?
-              </legend>
-                <v-radio-group
-                  v-model="ozri"
-                  column
-                  :disabled="codRAO[0].value != 2"
-                  class="calc__items py-0"
-                  @change="setOZRI"
-                >
-                  <v-radio label="Да" :value="1" class="calc__item"></v-radio>
-                  <v-radio label="Нет" :value="2" class="calc__item"></v-radio>
-                </v-radio-group>							
+              <legend>ОЗРИ?</legend>
+              <v-radio-group
+                v-model="ozri"
+                column
+                :disabled="codRAO[0].value != 2"
+                class="calc__items py-0"
+                @change="setOZRI"
+              >
+                <v-radio label="Да" :value="1" class="calc__item"></v-radio>
+                <v-radio label="Нет" :value="2" class="calc__item"></v-radio>
+              </v-radio-group>
             </fieldset>
             <!-- <v-container class="bordered">
               ОЗРИ?
@@ -72,15 +70,13 @@
         <v-row>
           <v-col cols="12" class="calc__types d-flex align-stretch">
             <fieldset class="bordered">
-              <legend>
-                9-10. Тип РАО
-              </legend>	
-                  <!-- Тип РАО -->
+              <legend>9-10. Тип РАО</legend>
+              <!-- Тип РАО -->
               <v-combobox
                 v-model="selectedTypes"
                 :items="filteredTypeRAO"
                 :key="oldAgregate"
-                item-text="description"
+                item-text="descript"
                 item-value="cod"
                 auto-select-first
                 dense
@@ -108,9 +104,7 @@
       </v-col>
       <v-col cols="7" class="mt-n2">
         <fieldset class="bordered">
-          <legend>
-            Радионуклидный состав
-          </legend>	          
+          <legend>Радионуклидный состав</legend>
           <v-row width="100%">
             <div class="nuclids__top">
               <v-col
@@ -367,33 +361,34 @@
             />
           </v-dialog>
         </v-row> -->
-
       </v-col>
       <div></div>
     </v-row>
-        <v-row class="d-flex justify-center mt-6">
-          <v-btn
-            :disabled="!enabledBTN"
-            height="50px"
-            width="50%"
-            @click="calcCodRAO"
-          >
-            Рассчитать
-          </v-btn>
-          <v-dialog
-            v-model="showNuclidsTable"
-            persistent
-            transition="dialog-bottom-transition"
-            width="65vw"
-          >
-            <Kod
-              :codRAO="codRAO"
-              :kodRAO="kodRAO"
-              :selectedNuclids="selectedNuclids"
-              v-on:close-dialog="closeDialog"
-            />
-          </v-dialog>
-        </v-row>    
+    <v-row class="d-flex justify-center mt-6">
+      <v-btn
+        :disabled="!enabledBTN"
+        height="50px"
+        width="50%"
+        @click="calcCodRAO"
+      >
+        Рассчитать
+      </v-btn>
+      <v-dialog
+        v-model="showNuclidsTable"
+        persistent
+        transition="dialog-bottom-transition"
+        width="auto"
+      >
+        <v-card>
+          <Kod
+            :codRAO="codRAO"
+            :kodRAO="kodRAO"
+            :selectedNuclids="selectedNuclids"
+            v-on:close-dialog="closeDialog"
+          />
+        </v-card>
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
@@ -401,5 +396,7 @@
 
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
-
+	.v-dialog
+		overflow-y: none !important
+		scrollable: false
 </style>

@@ -22,24 +22,23 @@ export default {
 };
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 html
   box-sizing: border-box
   margin: 0
   padding: 0
 
-fieldset 
+fieldset
   width: 100%
   border: 1px solid #339dc7
   /* Чтобы подстраивался под контент */
   display: inline-block
   padding: 10px
 
-legend 
+legend
   color: #339dc7
   font-style: italic
 
-  
 
 
 .calc
@@ -99,9 +98,9 @@ legend
   justify-content: center
   align-items: center
 
-.input 
+.input
   margin-top: -20px
-  padding: 0  
+  padding: 0
 
 .gap
   gap: 10px
@@ -129,11 +128,26 @@ legend
 
 .lineheight
   padding: 2px 8px
-    
+
 .nuclids__bottom
   width: 100%
   display: flex
-  justify-content: space-between  
+  justify-content: space-between
+
+.posparent
+  position: relative
+  // width: 100%
+
+.poschild
+  // align-self: end
+  position: fixed
+  // left: 95%
+  right: -95%
+  // top: 10px
+
+.v-dialog
+  overflow-y: auto !important
+  persistent: true
 
 @media (min-width: 2800px)
   .container
