@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4">
+  <v-card class="pa-4 overflow-y-auto">
     <v-row class="posparent">
       <v-col cols="12" class="calc__types d-flex align-stretch">
         <v-container class="bordered">
@@ -30,7 +30,7 @@
             </v-col>
           </v-row>
           <v-list dense>
-            <v-list-item-group class="bordered py-3">
+            <v-list-item-group>
               <v-list-item-title flat>
                 <v-row>
                   <v-col cols="3" class="pl-7">№ символа</v-col>
@@ -51,10 +51,10 @@
                     </v-col>
                     <v-col cols="7" class="pa-4">
                       {{
-                        codRAO[i].value === "*"
-                          ? codRAO[i].value
-                          : activeMenu(i)[0].text
-                      }}
+									codRAO[i].value === "*"
+										? codRAO[i].value
+										: activeMenu(i)[0].text
+								}}
                     </v-col>
                   </v-row>
                 </v-card>
@@ -98,59 +98,59 @@
 
 <script>
 export default {
-  props: ["codRAO", "kodRAO", "selectedNuclids"],
-  data() {
-    return {
-      headers: [
-        { text: "Радионуклид", value: "Name_RN" },
-        { text: "Период полураспада", value: "Period" },
-        { text: "Удельная активность", value: "UdAUnit" },
-        { text: "Вид излучения", value: "Vid_izluch" },
-        { text: "Трансурановый", value: "Trans" },
-        {
-          text: "ПЗУА",
-          value: "PZUA",
-        },
-        { text: "МУА", value: "MOI" },
-        { text: "Период потенциальной опасности", value: "Potential" },
-      ],
-      codheaders: [
-        { text: "№ символа", value: "description" },
-        { text: "Идентификатор", value: "value" },
-        { text: "Значение", value: "activeMenu(item-key)[0].text" },
-      ],
-    };
-  },
-  methods: {
-    activeMenu(idx) {
-      if (idx === 8) {
-        return this.codRAO[8].radios;
-      } else
-        return this.codRAO[idx].radios.filter((elem) => {
-          return elem.id === this.codRAO[idx].value;
-        });
-    },
-    copyToClipboard() {
-      navigator.clipboard.writeText(this.kodRAO);
-    },
-    closeDialog() {
-      this.$emit("close-dialog");
-    },
-  },
-  computed: {
-    isNine() {
-      let itNine = false;
-      this.codRAO.filter((elem, i) => {
-        if (i != 8) {
-          if (elem.value === 9) itNine = true;
-        } else {
-          if (elem.value.toString().length > 1)
-            if (elem.value.toString().substring(1, 2) === "9") itNine = true;
-        }
-      });
-      return itNine;
-    },
-  },
+	props: ["codRAO", "kodRAO", "selectedNuclids"],
+	data() {
+		return {
+			headers: [
+				{ text: "Радионуклид", value: "Name_RN" },
+				{ text: "Период полураспада", value: "Period" },
+				{ text: "Удельная активность", value: "UdAUnit" },
+				{ text: "Вид излучения", value: "Vid_izluch" },
+				{ text: "Трансурановый", value: "Trans" },
+				{
+					text: "ПЗУА",
+					value: "PZUA",
+				},
+				{ text: "МУА", value: "MOI" },
+				{ text: "Период потенциальной опасности", value: "Potential" },
+			],
+			codheaders: [
+				{ text: "№ символа", value: "description" },
+				{ text: "Идентификатор", value: "value" },
+				{ text: "Значение", value: "activeMenu(item-key)[0].text" },
+			],
+		};
+	},
+	methods: {
+		activeMenu(idx) {
+			if (idx === 8) {
+				return this.codRAO[8].radios;
+			} else
+				return this.codRAO[idx].radios.filter((elem) => {
+					return elem.id === this.codRAO[idx].value;
+				});
+		},
+		copyToClipboard() {
+			navigator.clipboard.writeText(this.kodRAO);
+		},
+		closeDialog() {
+			this.$emit("close-dialog");
+		},
+	},
+	computed: {
+		isNine() {
+			let itNine = false;
+			this.codRAO.filter((elem, i) => {
+				if (i != 8) {
+					if (elem.value === 9) itNine = true;
+				} else {
+					if (elem.value.toString().length > 1)
+						if (elem.value.toString().substring(1, 2) === "9") itNine = true;
+				}
+			});
+			return itNine;
+		},
+	},
 };
 </script>
 

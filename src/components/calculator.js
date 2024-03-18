@@ -2,11 +2,14 @@ import Radios from "./views/Radios.vue";
 import RadioNuclids from "./views/RadioNuclids.vue";
 import Kod from "./views/Kod.vue";
 import FileSaver from 'file-saver'
+import { mapGetters } from "vuex";
+
 
 export default {
   data() {
     return {
       filter: null,
+			search: null,
       validNuclids: false,
       showKod: false,
       nuclids: [],
@@ -288,8 +291,11 @@ export default {
     },
 
     changeTypeRAO() {
+			this.log("this.desc  " + this.desc)
+			this.log("this.selectedTypes  " + this.selectedTypes)
       if (this.selectedTypes) {
         this.desc = this.selectedTypes.description
+				this.log(this.desc)
         this.codRAO[8].value = this.selectedTypes.cod
         let items = {}
         items.id = this.selectedTypes.cod
@@ -535,7 +541,7 @@ export default {
       this.selectedNuclids = []
       this.selected = {}
       this.codRAO = []
-      this.codRAO = require("@/db/codRAO.json")
+      this.codRAO = this.getCodRAO
       this.UdAsSum = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
       //[тритий:[долго, коротко, сумма], бета[...], альфа[...], транс[...]]
 
@@ -649,14 +655,21 @@ export default {
   },
 
   created() {
-    this.codRAO = require("@/db/codRAO.json")
-    this.nuclids = require("@/db/nuclids.json")
-    this.typeRAO = require("@/db/typeRAO.json")
-    this.classTRO = require("@/db/classTRO.json")
-    this.classGRO = require("@/db/classGRO.json")
+    this.codRAO = this.getCodRAO
+    this.nuclids = this.getNuclids
+    this.typeRAO = this.getTypeRAO
+    this.classTRO = this.getClassTRO
+    this.classGRO = this.getClassGRO
   },
 
   computed: {
+		...mapGetters({
+			getCodRAO: 'getCodRAO',
+			getNuclids: 'getNuclids',
+			getTypeRAO: 'getTypeRAO',
+			getClassTRO: 'getClassTRO',
+			getClassGRO: 'getClassGRO',
+		}),		
     filteredNuclids() {
       if (this.filter === null) this.filter = ""
       if (this.codRAO[7].value === 6) {
@@ -687,9 +700,13 @@ export default {
 
     filteredTypeRAO() {
       return this.typeRAO.filter((elem) => {
-				elem.descript = elem.cod + ' - ' + elem.description
+				elem.descript = elem.cod + ' - ' + elem.description.substr(0, 80)
+				// elem.descript = elem.cod + ' - ' + elem.cod
+				this.log(elem.descript);
         return elem.section.includes(this.section)
+        // return elem.section
       });
+
     },
 
     filteredMassItem(edizm) {

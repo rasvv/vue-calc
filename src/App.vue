@@ -39,13 +39,16 @@ legend
   color: #339dc7
   font-style: italic
 
+v-row
+  margin: 0 -12 0 0 !important
 
 
 .calc
+  height: 100%
   &__form
     // min-height: 1050px
     // height: 95vh
-    height: 100%
+    min-height: 100%
     display: flex
     justify-content: center
 

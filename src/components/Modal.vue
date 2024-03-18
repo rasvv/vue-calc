@@ -12,11 +12,8 @@
 
 <script>
 export default {
-  props: {
-    activator: {
-      type: Boolean,
-      default: false,
-    },
-  },
+	data() {
+		activator: false
+	},
 };
 </script>

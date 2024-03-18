@@ -25,15 +25,22 @@
 
 <script>
 export default {
-  props: ["codRAO", "idx", "row", "wrap", "changeValue", "enabled"],
-  data() {
-    return {};
-  },
-  methods: {
-    disabled(elem, enable) {
-      return elem.enabled.includes(enable);
-    },
-  },
+	props: ["codRAO", "idx", "row", "wrap", "changeValue", "enabled"],
+	data() {
+		return {};
+	},
+	methods: {
+		disabled(elem, enable) {
+			return elem.enabled.includes(enable);
+		},
+	},
 };
 </script>
-<style lang="sass"></style>
+<style lang="sass">
+.v-input__details
+  display: none  !important
+
+.v-field__append-inner
+  display: none !important
+
+</style>
