@@ -85,16 +85,16 @@
               >
               </v-select> -->
 							<v-combobox 
-											:items="filteredTypeRAO" 
-											v-model="selectedTypes" 
-											item-title="descript" 
-											item-value="cod" 
-											label="Тип РАО"
-											@update:modelValue="changeTypeRAO"
-											hide-details
-											auto-select-first
-											clearable>
-										</v-combobox>
+								:items="filteredTypeRAO" 
+								v-model="selectedTypes" 
+								item-title="descript" 
+								item-value="cod" 
+								label="Тип РАО"
+								@update:modelValue="changeTypeRAO"
+								hide-details
+								auto-select-first
+								clearable>
+							</v-combobox>
               {{ desc }}
             </fieldset>
           </v-col>
@@ -114,10 +114,10 @@
 
 			</v-col>
 
-			<v-col cols="7" class="mt-n2">
+			<v-col cols="7" class="mt-n2 right">
 				<fieldset class="bordered">
 					<legend>Радионуклидный состав</legend>
-					<v-row width="100%">
+					<v-row width="95%">
 						<v-row class="nuclids__top">
 							<v-col cols="5" height="100%" class="d-flex justify-stretch flex-column calc__items">
 								<v-radio-group v-model="favoriteNuclids" column
@@ -168,7 +168,7 @@
 												label="Суммарная активность" 
 												v-model="sumAct" 
 												@change="recalcSumActFilter();
-						recalcUdANuclids();" 
+													recalcUdANuclids();" 
 												hide-details="auto" 
 												clearable 
 												:rules="[rules.required]" 
@@ -208,7 +208,7 @@
 						</v-row>
 						<v-row class="nuclids__bottom">
 							<v-col cols="5">
-									<v-list height="45vh" class="ml-4" dense>
+									<v-list height="40vh" class="ml-4" dense>
 										<v-list-item >
 											<v-list-item v-for="(item, i) in filteredNuclids" :key="i"
 												@click="selected = filteredNuclids[i]" @dblclick="addNuclid"
@@ -237,8 +237,8 @@
 							</v-col>
 
 							<v-col cols="6" @drop="onDrop" @dragover.prevent @dragenter.prevent>
-								<v-list class="calc__nuclids">
-									<v-list-item class="bordered" :style="rightPanel">
+								<v-list class="calc__nuclids bordered d-flex align-start" bg-color="blue-lighten-5">
+									<v-list-item class="bordered pa-10" :style="rightPanel">
 										<v-list-item v-for="(item, i) in selectedNuclids" :key="i"
 											@click="selectedMin = selectedNuclids[i]" @dblclick="delNuclid">
 											<div class="calc__nuclids-card">
@@ -252,23 +252,30 @@
 												<v-row v-show="showUda != 0">
 													<v-col cols="5">
 														<v-text-field label="Процентов" v-model="item.Percent"
-															type="number" @change="
-							recalcUdA(item);
-						isCorrect();
-						" @click="
-							recalcUdA(item);
-						isCorrect();
-						" :rules="[
-							rules.required,
-							rules.percent,
-							rules.percentPlus,
-						]" hide-details="auto" suffix="%"></v-text-field>
+															type="number" 
+															@change="recalcUdA(item);
+																isCorrect();" 
+															@click="recalcUdA(item);
+																isCorrect();" 
+																:rules="[
+																	rules.required,
+																	rules.percent,
+																	rules.percentPlus,
+																]" 
+															hide-details="auto" 
+															suffix="%"
+														></v-text-field>
 													</v-col>
 													<v-col cols="7">
-														<v-text-field label="Удельная активность (Бк/г)"
-															:readonly="true" :key="UdAKey" v-model="item.UdA"
-															type="number" hide-details="auto"
-															suffix="Бк/г"></v-text-field>
+														<v-text-field 
+															label="Удельная активность (Бк/г)"
+															:readonly="true" 
+															:key="UdAKey" 
+															v-model="item.UdA"
+															type="number" 
+															hide-details="auto"
+															suffix="Бк/г"
+														></v-text-field>
 													</v-col>
 												</v-row>
 											</div>
@@ -293,7 +300,18 @@
 				</v-dialog>
 			</v-row>
 		</v-row>
+		<v-row class="d-flex justify-center" >
+			<v-col cols="2"></v-col>
 
+			<v-col cols="8" class="d-flex justify-center">
+				2021 - {{ new Date().getFullYear() }}   &copy;   Все права защищены			
+			</v-col>
+			<v-col cols="2" class="d-flex justify-end">
+				Автор
+				<a href="https://rasvv.ru" target="blank" ><img src="../assets/rvv.png" alt="rvv" height="20px"></a>
+			</v-col>
+
+			</v-row>
 	</v-container>
 </template>
 
