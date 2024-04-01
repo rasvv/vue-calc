@@ -7,8 +7,6 @@
           <Radios
             :codRAO="codRAO"
             :idx="0"
-            :row="true"
-            :wrap="true"
             :enabled="section"
             :changeValue="changeValue"
             class="bordered"
@@ -144,7 +142,11 @@
               </v-col>
               <v-col cols="1" class="d-flex flex-column"> </v-col>
               <v-col cols="6" class="nuclids__top-right">
-                <v-radio-group v-model="showUda" column class="calc__items">
+                <v-radio-group
+                  v-model="showUda"
+                  column
+                  class="calc__items ma-3"
+                >
                   <v-radio
                     label="Удельная активность каждого нуклида"
                     :value="0"
@@ -162,28 +164,32 @@
                   ></v-radio>
                 </v-radio-group>
 
-                <v-row v-show="showUda === 0" class="px-4">
-                  <v-text-field
-                    label="Удельная активность"
-                    hide-details="auto"
-                    clearable
-                    v-model="obUdAct"
-                    :rules="[rules.required]"
-                    @change="
-                      recalcObUdActFilter();
-                      recalcUdANuclids();
-                    "
-                    suffix="Бк/г"
-                  >
-                    <v-tooltip location="top" activator="parent">
-                      <span>
-                        Возможен ввод в экспоненциальной форме в формате "1.5+9"
-                      </span>
-                    </v-tooltip>
-                  </v-text-field>
+                <v-row v-show="showUda === 0" class="pb-0">
+                  <v-col class="pb-0">
+                    <v-text-field
+                      label="Удельная активность"
+                      class="input ma-3"
+                      hide-details="auto"
+                      clearable
+                      v-model="obUdAct"
+                      :rules="[rules.required]"
+                      @change="
+                        recalcObUdActFilter();
+                        recalcUdANuclids();
+                      "
+                      suffix="Бк/г"
+                    >
+                      <v-tooltip location="top" activator="parent">
+                        <span>
+                          Возможен ввод в экспоненциальной форме в формате
+                          "1.5+9"
+                        </span>
+                      </v-tooltip>
+                    </v-text-field>
+                  </v-col>
                 </v-row>
 
-                <v-row v-show="showUda === 1" class="pb-0">
+                <v-row v-show="showUda === 1" class="pb-0 mx-0">
                   <v-col cols="5" class="pb-0">
                     <v-text-field
                       label="Суммарная активность"
@@ -280,7 +286,7 @@
                   class="calc__nuclids bordered d-flex align-start"
                   bg-color="blue-lighten-5"
                 >
-                  <v-list-item class="bordered pa-10" :style="rightPanel">
+                  <v-list-item class="pa-10" :style="rightPanel">
                     <v-list-item
                       v-for="(item, i) in selectedNuclids"
                       :key="i"
