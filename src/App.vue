@@ -1,20 +1,20 @@
 <template>
-	<v-app class="d-flex column">
-		<v-main >
-			<Calculator />
-		</v-main>
-	</v-app>
+  <v-app class="d-flex column">
+    <v-main>
+      <Calculator />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import Calculator from "./components/Calculator.vue";
+import Calculator from './components/Calculator.vue';
 
 export default {
-	name: "App",
+  name: 'App',
 
-	components: {
-		Calculator,
-	},
+  components: {
+    Calculator,
+  },
 };
 </script>
 
@@ -25,7 +25,7 @@ html
 	padding: 0
 
 main
-	height: 100vh	
+	height: 100vh
 
 fieldset
 	width: 100%
@@ -43,7 +43,7 @@ v-row
 
 .calc
 	height: 95vh
-	
+
 	&__form
 		// min-height: 1050px
 		// height: 95vh
@@ -68,15 +68,15 @@ v-row
 		margin: 0
 
 	&__nuclids
-		width: 95%
+		width: 90%
 		background-color: aliceblue
 		display: list-inline
+		height: 800px
 
 		&-card
 			border-bottom: 1px solid #ccc
 			width: 100%
 			padding: 10px
-			justify-content: start
 
 .v-btn:not(.v-btn--round).v-size--default
 	width: 100%
@@ -114,7 +114,7 @@ v-row
 	height: 70vh
 
 .right
-	overflow-y: scroll
+	overflow-y: auto
 	overflow-x: none
 	height: 90vh
 
@@ -151,7 +151,7 @@ v-row
 	// top: 10px
 
 .v-dialog
-	overflow-y: scroll !important
+	overflow-y: auto !important
 	persistent: true
 
 @media (min-width: 2800px)

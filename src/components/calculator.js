@@ -45,7 +45,6 @@ export default {
         'overflow-y': 'scroll'
       },
       rightPanel: {
-        height: '52vh',
         'overflow-y': 'auto'
       },
       headers: [
