@@ -124,7 +124,7 @@
                 <v-radio-group
                   v-model="favoriteNuclids"
                   column
-                  class="d-flex align-start flex-column calc__items"
+                  class="d-flex align-start flex-column calc__items ma-3"
                 >
                   <v-radio label="Все" :value="0" class="calc__item"></v-radio>
                   <v-radio
@@ -134,7 +134,7 @@
                   ></v-radio>
                 </v-radio-group>
                 <v-text-field
-                  class="input"
+                  class="input ma-3"
                   width="300px"
                   label="Поиск"
                   hide-details="auto"
@@ -232,7 +232,7 @@
             </v-row>
             <v-row class="nuclids__bottom">
               <v-col cols="5">
-                <v-list height="600px" class="ml-4" dense>
+                <v-list height="480px" class="ml-4" dense>
                   <v-list-item>
                     <v-list-item
                       v-for="(item, i) in filteredNuclids"
@@ -250,7 +250,7 @@
                   </v-list-item>
                 </v-list>
                 <!-- <v-divider></v-divider>	 -->
-                <div class="bordered mt-2" v-show="!showNuclidsTable">
+                <div class="bordered ma-2" v-show="!showNuclidsTable">
                   <RadioNuclids
                     :codRAO="codRAO"
                     :selected="selected"
@@ -274,6 +274,7 @@
                 @drop="onDrop"
                 @dragover.prevent
                 @dragenter.prevent
+                class="pa-6"
               >
                 <v-list
                   class="calc__nuclids bordered d-flex align-start"

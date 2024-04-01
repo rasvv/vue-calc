@@ -64,14 +64,13 @@ v-row
 		display: flex
 		justify-content: space-around
 		display: block
-		gap: 30px
 		margin: 0
 
 	&__nuclids
 		width: 90%
 		background-color: aliceblue
 		display: list-inline
-		height: 800px
+		min-height: 700px
 
 		&-card
 			border-bottom: 1px solid #ccc
