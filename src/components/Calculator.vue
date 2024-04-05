@@ -354,6 +354,7 @@
         </fieldset>
       </v-col>
       <v-row class="d-flex justify-center pa-6">
+        <SumNuclids />
         <v-btn
           :disabled="!enabledBTN"
           height="50px"

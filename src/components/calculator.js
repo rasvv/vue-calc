@@ -1,6 +1,7 @@
 import Radios from "./views/Radios.vue";
 import RadioNuclids from "./views/RadioNuclids.vue";
 import Kod from "./views/Kod.vue";
+import SumNuclids from "./views/SumNuclids.vue";
 import FileSaver from 'file-saver'
 import { mapGetters } from "vuex";
 
@@ -68,7 +69,8 @@ export default {
   components: {
     Radios,
     RadioNuclids,
-    Kod
+    Kod,
+		SumNuclids
   },
   methods: {
     copyToClipboard() {
