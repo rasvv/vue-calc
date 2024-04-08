@@ -354,7 +354,6 @@
         </fieldset>
       </v-col>
       <v-row class="d-flex justify-center pa-6">
-        <SumNuclids />
         <v-btn
           :disabled="!enabledBTN"
           height="50px"
@@ -400,7 +399,7 @@
 
 <style lang="sass" scoped>
 // link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css"
-	.v-dialog
-		overflow-y: none !important
-		scrollable: false
+.v-dialog
+	overflow-y: none !important
+	scrollable: false
 </style>

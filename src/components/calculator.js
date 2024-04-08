@@ -3,7 +3,7 @@ import RadioNuclids from "./views/RadioNuclids.vue";
 import Kod from "./views/Kod.vue";
 import SumNuclids from "./views/SumNuclids.vue";
 import FileSaver from 'file-saver'
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 
 export default {
@@ -35,6 +35,7 @@ export default {
       ozri: 2,
       selectedTypes: [],
       UdAsSum: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+			// [тритий [долгоживущие, короткоживущие, сумма], альфа, бета, трансурановые]
       desc: "",
       rules: {
         required: value => !!value || 'Введите значение',
@@ -46,7 +47,8 @@ export default {
         'overflow-y': 'scroll'
       },
       rightPanel: {
-        'overflow-y': 'auto'
+        'overflow-y': 'auto',
+				'width': '100%'
       },
       headers: [
         { text: "Радионуклид", value: "Name_RN" },
@@ -73,6 +75,7 @@ export default {
 		SumNuclids
   },
   methods: {
+		...mapActions(['updateUdAsSum']),
     copyToClipboard() {
       navigator.clipboard.writeText(this.kodRAO);
     },
@@ -430,29 +433,31 @@ export default {
       this.selectedNuclids.forEach((elem) => {
         switch (elem.Sostav){
           case "тритий": {
-            this.checkLongLife(elem) ? this.UdAsSum[0][0] += +elem.UdA : this.UdAsSum[0][1] += +elem.UdA
-            this.UdAsSum[0][2] += +elem.UdA
-            break
-          }
-          case "бета": {
-            this.checkLongLife(elem) ? this.UdAsSum[1][0] += +elem.UdA : this.UdAsSum[1][1] += +elem.UdA
-            this.UdAsSum[1][2] += +elem.UdA
+            this.calcSostav(elem, 0, +elem.UdA);
             break
           }
           case "альфа": {
-            this.checkLongLife(elem) ? this.UdAsSum[2][0] += +elem.UdA : this.UdAsSum[2][1] += +elem.UdA
-            this.UdAsSum[2][2] += +elem.UdA
+            this.calcSostav(elem, 1, +elem.UdA);
+            break
+          }
+          case "бета": {
+            this.calcSostav(elem, 2, +elem.UdA);
             break
           }
           case "трансурановые": {
-            this.checkLongLife(elem) ? this.UdAsSum[3][0] += +elem.UdA : this.UdAsSum[3][1] += +elem.UdA
-            this.UdAsSum[3][2] += +elem.UdA
+            this.calcSostav(elem, 3, +elem.UdA);
             break
           }
         }
         this.calcCategory_RAO()
       });
     },
+
+		calcSostav(elem, index, value) {
+			this.checkLongLife(elem) ? this.UdAsSum[index][0] += +value : this.UdAsSum[index][1] += +value;
+			this.UdAsSum[index][2] += +value;
+			this.updateUdAsSum(this.UdAsSum);
+		},
 
     checkSostav(selected) {
       if (selected.Name_RN === "тритий") return "тритий"; //тритий

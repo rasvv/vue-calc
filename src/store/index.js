@@ -15,14 +15,12 @@ export default createStore({
     myTypeRAOjson: typeRAOjson,
     myClassTROjson: classTROjson,
     myClassGROjson: classGROjson,
-
-    fz: 16,
-    lh: 1.5,
-    fontSize: {},    
+		udAsSum: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+  
   },
   mutations: {
-    setView (state, payload) {
-      state.view = payload
+    setUdAsSum (state, payload) {
+      state.udAsSum = payload
     },
     setPhotoCurrentPage (state, payload) {
       state.photoCurrentPage = payload
@@ -49,9 +47,9 @@ export default createStore({
     updatePhotoCurrentPage ({ commit }, page) {
       return commit('setPhotoCurrentPage', page)
     },
-    updateView ({ commit }, view) {
+    updateUdAsSum ({ commit }, udAsSum) {
       // console.log(view);
-      return commit('setView', view)
+      return commit('setUdAsSum', udAsSum)
     },
     updateAlbum ({ commit }, album) {
       // console.log('updateAlbum ' + album);
@@ -75,6 +73,7 @@ export default createStore({
     getNuclids: state => state.myNuclidsjson,
     getTypeRAO: state => state.myTypeRAOjson,
     getClassTRO: state => state.myClassTROjson,
-    getClassGRO: state => state.myClassGROjson
+    getClassGRO: state => state.myClassGROjson,
+    getUdAsSum: state => state.udAsSum
   }
 })
